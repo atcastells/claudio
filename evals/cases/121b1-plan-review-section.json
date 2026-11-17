@@ -1,0 +1,1 @@
+{"name":"plan template has a Review section with a signed waiver","kind":"file_contains","file":"{root}/skills/sdlc/templates/plan.md","contains":"Waiver: <reason> (<who>, <date>)"}

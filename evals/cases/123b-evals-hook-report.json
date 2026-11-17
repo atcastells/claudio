@@ -1,0 +1,1 @@
+{"name":"evals-on-config-change: red report is trimmed to the FAIL lines and the summary, green is silent","kind":"hook","script":"evals/scripts/evals-hook-run-test.sh","args":["{root}/hooks/evals-on-config-change.sh","report"],"expect_exit":0,"contains":"all passed"}

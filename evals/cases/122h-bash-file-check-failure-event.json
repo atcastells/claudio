@@ -1,0 +1,1 @@
+{"name":"bash-file-check: a failed Bash command is checked too; marker symlink not followed; hostile names printed sanitized; newline id rejected","kind":"hook","script":"evals/scripts/bash-file-check-test.sh","args":["{root}/hooks/bash-file-check.sh","failure"],"expect_exit":0,"contains":"all passed"}

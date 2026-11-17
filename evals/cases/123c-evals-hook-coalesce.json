@@ -1,0 +1,1 @@
+{"name":"evals-on-config-change: concurrent invocations coalesce into one pending re-run, stale locks are taken over, symlinked locks are refused","kind":"hook","script":"evals/scripts/evals-hook-run-test.sh","args":["{root}/hooks/evals-on-config-change.sh","coalesce"],"expect_exit":0,"contains":"all passed"}

@@ -20,7 +20,7 @@ Three asks, kept separate so each can be approved on its own:
    the user's AI agent that does the whole install.
 3. **Tooltips**: recommendations based on the workflow.
 4. **Company progress phrases** (added 2026-11-04): "I want the starter
-   kit phrases to move to the Elektro3 company profile we have in the
+   kit phrases to move to the <Company> company profile we have in the
    documentation repo, and to be applied when that profile is installed."
    (translated)
 
@@ -43,10 +43,10 @@ including people who are not technical. What the repo shows today (verified 2026
   not a git repo; its copy in the documentation repo was deleted in commit
   `ec95956`); 27 of them in the maintainer's `~/.claude/settings.json`,
   present since before the first install. Nothing in this repo or in the
-  Elektro3 profile sets them.
-- The company profile today: `profiles/elektro3/company.json` (in the clone
+  <Company> profile sets them.
+- The company profile today: `profiles/<company>/company.json` (in the clone
   `~/Repos/claude-sdlc`) names the documentation repo and one rules file,
-  `IA/Perfil Elektro3/Reglas Elektro3.md`. `install.sh` only appends that
+  `IA/Perfil <Company>/Reglas <Company>.md`. `install.sh` only appends that
   file to `CLAUDE.md`; on an existing `settings.json` it merges only
   `hooks`, `permissions` and `statusLine` and keeps everything else, so a
   company cannot ship phrases today.
@@ -81,9 +81,9 @@ Chosen by the originator (2026-11-04), three signals:
 | 2026-11-04 | Where do the tooltips appear? | "The idea is that they are more meta topics, for example an estimate of the time a task will take, etc., in the status line." (translated) | maintainer |
 | 2026-11-04 | Which meta hints besides the estimate? | Task in progress against its estimate (e.g. `T3 4m/6m`); what is left of the plan (e.g. `5/12 · ~22m left`); a context/cost warning. Not chosen: next workflow step. | maintainer |
 | 2026-11-04 | One release or several? | One: 3.0.0. | maintainer |
-| 2026-11-04 | Company progress phrases | The 64 starter kit phrases move to the Elektro3 company profile in the documentation repo (`IA/Perfil Elektro3/`) and are applied when that profile is installed. | maintainer |
+| 2026-11-04 | Company progress phrases | The 64 starter kit phrases move to the <Company> company profile in the documentation repo (`IA/Perfil <Company>/`) and are applied when that profile is installed. | maintainer |
 | 2026-11-04 | Company phrases vs the user's own | The company phrases replace the user's. | maintainer |
-| 2026-11-04 | "punto y coma" vs "punto y semicolon" | "The Elektro3 one" (translated): read as the starter kit version, "Buscando el punto y coma". | maintainer |
+| 2026-11-04 | "punto y coma" vs "punto y semicolon" | "The <Company> one" (translated): read as the starter kit version, "Buscando el punto y coma". | maintainer |
 | 2026-11-04 | Only phrases, or other display settings? | Only phrases. Other settings can be considered later if they are visible in all three clients: desktop, terminal and T3 Code. | maintainer |
 | 2026-11-04 | Success signals | Install with one sentence; README without jargon; useful hints in the bar. Not chosen as a signal: "nothing breaks for an existing install from `~/claude-sdlc`". | maintainer |
 

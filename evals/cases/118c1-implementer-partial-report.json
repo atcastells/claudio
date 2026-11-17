@@ -1,0 +1,1 @@
+{"name":"implementer leaves a running report for a partial stop","kind":"file_contains","file":"{root}/agents/implementer.md","contains":"cut short at the turn limit"}

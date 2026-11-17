@@ -1,0 +1,1 @@
+{"name":"bash-file-check: quiet scenarios (no change, non-git, ignored, missing marker, bad id) and changed_files listing","kind":"hook","script":"evals/scripts/bash-file-check-test.sh","args":["{root}/hooks/bash-file-check.sh"],"expect_exit":0,"contains":"all passed"}

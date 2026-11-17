@@ -1,0 +1,1 @@
+{"name":"verifier runs git in its own command","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"git in its own command, never chained"}

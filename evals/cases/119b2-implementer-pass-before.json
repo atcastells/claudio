@@ -1,0 +1,1 @@
+{"name":"implementer reports a test that passed before the change as such","kind":"file_contains","file":"{root}/agents/implementer.md","contains":"a test that passes before the change is reported as such, not as red"}

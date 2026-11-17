@@ -17,7 +17,7 @@ Each one traces to a line of the intent.
 |---|-------------|--------------------|----------------------|
 | R1 | Every user-facing text says **Claudio**: README, the new `CHANGELOG.md` entry, skill and agent descriptions, `install.sh` output, `skills/repo-setup/check.sh` messages and the prefix of every hook notice (`Claudio:` instead of `claude-sdlc:`). Past `.sdlc/` artifacts and past `CHANGELOG.md` entries are not rewritten (audit trail). | Ask 1; decision "How far does the rename go?" | `git grep -n claude-sdlc -- ':!.sdlc' ':!CHANGELOG.md' ':!migrations'` returns only the compatibility lines R3 allows; case 39b renamed and asserting `Claudio:`. |
 | R2 | Internal names follow: temp markers `claudio-mode-<id>` and `claudio-report-<id>`. | Same decision | Cases 113* and the report-check scripts assert the new names; full suite green. |
-| R3 | Default clone path `~/claudio` and URL `github.com/atcastells/claudio` in README and notices. Existing installs keep working: `install.sh` and `workflow-version-check.sh` keep reading the recorded `source` and `profile` paths (e.g. `~/claude-sdlc`, `~/Repos/claude-sdlc/profiles/elektro3`), and clone detection stays by files, not by folder name. | Same decision ("existing installs keep working from the old path") | Eval: a fake clone in a folder named `claude-sdlc` is still recognised (88e/88f/88g green); a clean install from a folder named `claudio` ends green. |
+| R3 | Default clone path `~/claudio` and URL `github.com/atcastells/claudio` in README and notices. Existing installs keep working: `install.sh` and `workflow-version-check.sh` keep reading the recorded `source` and `profile` paths (e.g. `~/claude-sdlc`, `~/Repos/claude-sdlc/profiles/<company>`), and clone detection stays by files, not by folder name. | Same decision ("existing installs keep working from the old path") | Eval: a fake clone in a folder named `claude-sdlc` is still recognised (88e/88f/88g green); a clean install from a folder named `claudio` ends green. |
 | R4 | README main part, for any Claude Code user: what Claudio is in two or three sentences, one sentence to paste, what changes for you in plain bullets, and how to get help. None of: hook, eval, jq, semver, subagent, model names, `.sdlc`, YAML/JSON. Fits on one screen (≤ 40 lines above the first technical heading). Everything technical moves to `docs/technical.md`, linked once at the end. | Ask 2; signal "README without jargon"; decision "Who reads the plain README?" | New file case: README lines above `## Technical details` contain none of the listed terms and are ≤ 40; `docs/technical.md` holds the by-hand install and the feature list that left the README. |
 | R5 | The paste sentence asks the user's agent to do everything: check `git` and `jq` and install them if missing (asking the user first), clone or update `~/claudio`, ask whether there is an organization profile, run the install, and explain the result in plain words. | Signal "Install with one sentence" | Case checks the sentence is in the README and names those steps. Manual check, left to the maintainer: one run in a clean `HOME` pasting only the sentence. |
 | R6 | Status line, **task segment**: when the repo has an open plan (R8), shows the task whose Status starts with `in progress` as `T3 4m/6m` (elapsed / estimate). Elapsed comes from that task's `start` line in `actuals.jsonl` (main-run tasks); for other runners, which have no start line, `T3 ~6m`. Yellow above the estimate, red above twice it. | Decision "Which meta hints": task vs estimate | Status-line cases: fixture plan + actuals with a known `start` ts and a fixed clock show `T3 4m/6m`; over 6m yellow, over 12m red; a non-main task shows `~6m`. |
@@ -27,7 +27,7 @@ Each one traces to a line of the intent.
 | R10 | The hints never break or slow the line: they read only the repo's `.sdlc/*/plan.md` and `actuals.jsonl`, skip symlinks and files over 256 KB, print only the task id and numbers (never task text), and any parse error drops the segment. Texts in English, like every public text. | Constraint of R6–R9 (status line runs on every refresh) | Cases: symlinked plan, 300 KB plan, garbage plan → line as today; cases 90-92 and 113* still green; `time` of the line with a 30-row plan under 150 ms on the maintainer's machine. |
 | R11 | `company.json` may name a phrases file: optional key `spinner_verbs`, a relative path inside the company repo, validated like `rules` (regular file, inside the repo, no `..`, ≤ 16 KB). Content: a JSON array of 1–200 strings, each 1–80 characters, no control characters. Invalid → `install.sh` stops before writing anything, as it does for `rules`. | Ask 4; decision "Company progress phrases" | Install cases with fixtures: valid, missing file, `..`, symlink, not an array, 201 items, an 81-character item, a control character. |
 | R12 | When the profile names phrases, `install.sh` sets `spinnerVerbs` in `~/.claude/settings.json` to `{"mode": "replace", "verbs": [...]}`, replacing the user's phrases (the usual `settings.json.bak-<ts>` is the backup), and prints one line saying so. Without the key, the user's `spinnerVerbs` is left untouched. If a later install has no phrases, the last ones stay (answers the open question: left as they are; the backup holds the user's originals). | Decisions "Company phrases vs the user's own", "Only phrases" | Cases: user with own phrases + profile with phrases → replaced and backup has the old ones; profile without key → untouched; only `spinnerVerbs` changes besides the keys merged today. |
-| R13 | Elektro3 content: `IA/Perfil Elektro3/Frases de progreso.json` in the documentation repo with the 64 starter kit phrases ("Buscando el punto y coma" wording), and `"spinner_verbs"` added to `profiles/elektro3/company.json`. | Decisions "Company progress phrases", "punto y coma" | Install with the Elektro3 profile: `jq '.spinnerVerbs.verbs | length'` is 64 and contains "Buscando el punto y coma". |
+| R13 | <Company> content: `IA/Perfil <Company>/Frases de progreso.json` in the documentation repo with the 64 starter kit phrases ("Buscando el punto y coma" wording), and `"spinner_verbs"` added to `profiles/<company>/company.json`. | Decisions "Company progress phrases", "punto y coma" | Install with the <Company> profile: `jq '.spinnerVerbs.verbs | length'` is 64 and contains "Buscando el punto y coma". |
 
 ## Design
 
@@ -69,17 +69,17 @@ today; the context hint after the bar.
 `rules`, with the same path checks and the content checks of R11 in `jq`.
 At the settings step, after today's merge of `hooks`, `permissions` and
 `statusLine`, it sets `.spinnerVerbs = {mode: "replace", verbs: $v}`. The
-Elektro3 files live outside this repo: the phrases file in the
+<Company> files live outside this repo: the phrases file in the
 documentation repo (the maintainer commits it to GitLab) and the key in the
-git-ignored `profiles/elektro3/company.json` of `~/Repos/claude-sdlc`.
+git-ignored `profiles/<company>/company.json` of `~/Repos/claude-sdlc`.
 
 ## Policy applied
 
 - **Personal data**: none. The phrases are generic; status line hints show
   only task ids and numbers.
-- **Sensitive business data** (as the Elektro3 profile defines it): none.
+- **Sensitive business data** (as the <Company> profile defines it): none.
   Estimates and actuals are about agent tasks, not costs, margins or stock.
-  The company name in phrases ("Elektro3ficando") stays in the company repo;
+  The company name in phrases ("<Company>ficando") stays in the company repo;
   `scripts/check-public.sh` must stay green so it never reaches the public
   repo.
 - **Credentials**: none.

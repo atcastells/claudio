@@ -32,10 +32,7 @@ which artifacts exist in `.sdlc/<slug>/` and propose the next stage without
 writing anything yet; if several slugs are open, ask which one.
 
 **Never skip a stage.** If the input artifact is missing, say so and offer to
-write it. A `plan.md` without a `spec.md` is a plan built on invented
-assumptions.
-
----
+write it. A `plan.md` without a `spec.md` is built on invented assumptions.
 
 ## Stage 1 — Plan → `intent.md`
 
@@ -85,17 +82,22 @@ subagents in one message, each prompt's first line
 it), then "read context.md first". After the wave compare `git diff --stat`
 with the plan's files, read every diff, and fold the reports' `Learned:`
 lines into `context.md` (no duplicates, ≤ 30 lines, no sensitive data).
-TDD: red test first. If a test fails, **fix the code, not the test**.
+TDD: red test first. If a test fails, **fix the code, not the test**. Agents
+edit repo files with Edit or Write; shell only for temp files (hooks see it).
 
 Close each task in its *Status* column (done, in progress, blocked + note):
-the live list, the resume point and the clock of `main` tasks. At Build close
-fill *Estimate vs actual* from `actuals.jsonl`: estimates, not people.
+the live list, the resume point and the clock of `main` tasks; track
+orchestration on `main` rows so it is measured too. At Build close fill
+*Estimate vs actual* from `actuals.jsonl`: estimates, not people. And
+no figure reaches the user without a run in which the measurement could have failed.
 
 ## Stage 4 — Test → self-verification
 
-Verify your work before anyone sees it: tests, build, or a screenshot. Use
-the `verifier` subagent to check the change plus two adjacent flows; it
-reports, it does not fix. Nothing reaches human review with a broken build.
+Verify your work before anyone sees it: tests, build, or a screenshot. Main
+runs the suite once and passes the result to the `verifier`, which checks the
+change plus two adjacent flows; it reports, it does not fix. Nothing reaches
+human review with a broken build. A subagent output marked as partial hit its
+turn limit: resume it with SendMessage; do not relaunch it.
 
 ## Stage 5 — Deploy → PR + findings
 
@@ -104,8 +106,8 @@ Read the repo's `REVIEW.md` (if missing, offer to create it from
 against `spec.md` + `plan.md`. Launch three `reviewer` subagents in parallel,
 one per pass (`bugs`, `security`, `conformance`); you consolidate: open every
 cited file:line, drop duplicates, keep the 5 nits that matter most. A dynamic
-workflow for the review only when the user asks for one: it costs several
-times a subagent review.
+workflow only when the user asks (it costs several subagent reviews). A plan
+is not closed while its *Review* section is empty: verdicts or a waiver.
 
 Classify each finding **Important** or **Nit**, at most 5 nits. Important is
 only what would block the merge, with file, line, why it is wrong and how to
@@ -114,7 +116,8 @@ Human attention moves up a level: not every line, but whether the change does
 what the plan intended and whether the risk is acceptable.
 
 Git is reserved for the developer (see `CLAUDE.md`): prepare the PR, draft
-the description and the findings, but **you do not commit or push**.
+the description and the findings, but **you do not commit or push**. Run
+git in its own command, never chained: a chain with git is denied whole.
 Production requires `RELEASE_APPROVAL`; the `production-gate` hook checks it.
 
 ## Stage 6 — Maintain → `incident.md` → new `intent.md`
@@ -127,8 +130,6 @@ broke, which control failed, impact, root cause. Two mandatory outputs:
    `~/.claude/evals/`. Every production incident becomes an eval that is
    never removed. If it runs a test in a product repo, set `"repo"` to that
    repo's path: it then runs in that repo's Test stage, not on install.
-
----
 
 ## Session, context and cost
 

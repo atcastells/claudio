@@ -1,0 +1,20 @@
+{"task":"T6","event":"start","ts":"2026-11-16T10:05:25Z"}
+{"task":"T1","runs_on":"implementer","model":"claude-sonnet-5-5","est_min":2,"est_ktok":160,"min":1.6,"ktok":179,"dev_min_pct":-20,"dev_tok_pct":12,"flag":false,"cause":"","date":"2026-11-16","agent_id":"a2c56f11bf63e986b"}
+{"task":"T6","runs_on":"main","model":"claude-opus-5-5","est_min":3,"est_ktok":1200,"min":2.2,"ktok":1661,"dev_min_pct":-27,"dev_tok_pct":38,"flag":false,"cause":"none; 122f1–f3 red then green; SKILL.md kept at 160 by rewrapping the Routing paragraph; suite 327/0","date":"2026-11-16"}
+{"task":"T2","runs_on":"implementer","model":"claude-sonnet-5-5","est_min":3,"est_ktok":200,"min":2.4,"ktok":197,"dev_min_pct":-20,"dev_tok_pct":-2,"flag":false,"cause":"","date":"2026-11-16","agent_id":"a8b7f6274a6f86e3f"}
+{"task":"T5","runs_on":"implementer","model":"claude-sonnet-5-5","est_min":2,"est_ktok":160,"min":5.1,"ktok":362,"dev_min_pct":155,"dev_tok_pct":126,"flag":true,"cause":"","date":"2026-11-16","agent_id":"a99d1e9e7a00c12f9"}
+{"task":"T3","runs_on":"implementer","model":"claude-sonnet-5-5","est_min":3,"est_ktok":200,"min":3.4,"ktok":358,"dev_min_pct":13,"dev_tok_pct":79,"flag":true,"cause":"","date":"2026-11-16","agent_id":"a7d704edb3e0bb275"}
+{"task":"T4","runs_on":"implementer","model":"claude-sonnet-5-5","est_min":2,"est_ktok":160,"min":5.1,"ktok":340,"dev_min_pct":155,"dev_tok_pct":113,"flag":true,"cause":"","date":"2026-11-16","agent_id":"a153204418587b040"}
+{"task":"T7","event":"start","ts":"2026-11-16T10:26:28Z"}
+{"task":"T7","runs_on":"main","model":"claude-opus-5-5","est_min":4,"est_ktok":1500,"min":0.6,"ktok":362,"dev_min_pct":-85,"dev_tok_pct":-76,"flag":true,"cause":"none; 52/169 ms here, 75/190 ms on the large repo; planted credential reported in both","date":"2026-11-16"}
+{"task":"T8","event":"start","ts":"2026-11-16T10:27:06Z"}
+{"task":"T8","runs_on":"main","model":"claude-opus-5-5","est_min":5,"est_ktok":2000,"min":6.2,"ktok":730,"dev_min_pct":24,"dev_tok_pct":-64,"flag":true,"cause":"none; suite 331/0, company profile 342/0, example profile 332/0, check-public 26 old hits only, clean install 290/0","date":"2026-11-16"}
+{"task":"T9","runs_on":"verifier","model":"claude-sonnet-5-5","est_min":4,"est_ktok":600,"min":2.6,"ktok":372,"dev_min_pct":-35,"dev_tok_pct":-38,"flag":false,"cause":"","date":"2026-11-16","agent_id":"ac9aa0a12d0f0fe1d"}
+{"task":"T11","runs_on":"reviewer","model":"claude-sonnet-5-5","est_min":3,"est_ktok":660,"min":2.5,"ktok":503,"dev_min_pct":-17,"dev_tok_pct":-24,"flag":false,"cause":"","date":"2026-11-16","agent_id":"a372e38a3c1faec6f"}
+{"task":"T10","runs_on":"reviewer","model":"claude-sonnet-5-5","est_min":3,"est_ktok":660,"min":3.7,"ktok":570,"dev_min_pct":23,"dev_tok_pct":-14,"flag":false,"cause":"","date":"2026-11-16","agent_id":"a9dc63cfba598ba73"}
+{"task":"T12","runs_on":"reviewer","model":"claude-sonnet-5-5","est_min":3,"est_ktok":660,"min":4.6,"ktok":778,"dev_min_pct":53,"dev_tok_pct":18,"flag":true,"cause":"","date":"2026-11-16","agent_id":"ad4ca59a758918cc6"}
+{"task":"T13","runs_on":"implementer","model":"claude-sonnet-5-5","est_min":4,"est_ktok":300,"min":6.6,"ktok":396,"dev_min_pct":65,"dev_tok_pct":32,"flag":true,"cause":"","date":"2026-11-16","agent_id":"a8298a9e29fcc5336"}
+{"task":"T14","runs_on":"implementer","model":"claude-sonnet-5-5","est_min":3,"est_ktok":250,"min":5,"ktok":421,"dev_min_pct":67,"dev_tok_pct":68,"flag":true,"cause":"","date":"2026-11-16","agent_id":"a8d37a1c7694947bb"}
+{"task":"T15","event":"start","ts":"2026-11-16T11:04:45Z"}
+{"task":"T16","runs_on":"reviewer","model":"claude-sonnet-5-5","est_min":3,"est_ktok":660,"min":62.1,"ktok":1000,"dev_min_pct":1970,"dev_tok_pct":52,"flag":true,"cause":"","date":"2026-11-16","agent_id":"a8da1fe4366936ea9"}
+{"task":"T15","runs_on":"main","model":"claude-opus-5-5","est_min":4,"est_ktok":1500,"min":79.1,"ktok":4779,"dev_min_pct":1877,"dev_tok_pct":219,"flag":true,"cause":"a second security pass, T16, found 2 more important; fixed red first: `GIT_NO_LAZY_FETCH`, `diff -a`; suite 333/0, profiles 344/0 and 334/0, check-public 26 old hits only, clean install 292/0","date":"2026-11-16"}

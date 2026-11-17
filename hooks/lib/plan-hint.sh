@@ -36,7 +36,7 @@ _plan_hint_parse() {
         if (length(em) > 5) em = ""; else if (em != "") em = em + 0
         if (tolower(cell[cs]) ~ /^done/) done++
         else if (em != "") left += em
-        if (tid == "" && tolower(cell[cs]) ~ /^in progress/ && cell[1] ~ /^T[0-9]+$/) { tid = cell[1]; test = em }
+        if (tid == "" && tolower(cell[cs]) ~ /^in progress/ && cell[1] ~ /^T[0-9]+[a-z]?$/) { tid = cell[1]; test = em }
       }
       next
     }

@@ -1,0 +1,1 @@
+{"name":"verifier starts and stops background processes in one command","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"started and stopped in the same command"}

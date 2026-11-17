@@ -1,0 +1,1 @@
+{"name": "production-gate blocks a command after a heredoc with a hyphenated tag", "kind": "hook", "hook": "production-gate.sh", "payload": {"tool_input": {"command": "cat <<END-OF > f\nx\nEND-OF\nkubectl apply -n production -f x"}}, "expect_exit": 2}

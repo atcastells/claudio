@@ -1,0 +1,1 @@
+{"name": "production-gate still scans the command that opens a heredoc", "kind": "hook", "hook": "production-gate.sh", "payload": {"tool_input": {"command": "kubectl apply -n production -f - <<EOF\nkind: X\nEOF"}}, "expect_exit": 2}

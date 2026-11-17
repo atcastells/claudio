@@ -1,0 +1,1 @@
+{"name":"verifier cleans its temporary files in the same command","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"under `mktemp -d`, removed in the same command"}

@@ -1,0 +1,1 @@
+{"name":"verifier copies repo files, never moves them out","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"never moved out of the repo"}

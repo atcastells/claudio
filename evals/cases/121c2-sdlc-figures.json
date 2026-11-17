@@ -1,0 +1,1 @@
+{"name":"sdlc: no figure without a run that could fail","kind":"file_contains","file":"{root}/skills/sdlc/SKILL.md","contains":"no figure reaches the user without a run in which the measurement could have failed"}

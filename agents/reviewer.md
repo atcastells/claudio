@@ -53,5 +53,8 @@ open it before accepting it. At most 5 nits.
 
 - **Read-only.** No edits, no git writes, no commands that change state.
 - Excluded paths in `REVIEW.md` are not reviewed.
+- Your turns are limited. Keep your last message a running report (findings
+  so far, what is left), so output cut short at the turn limit still says
+  where you stopped.
 - Do not reproduce personal data or sensitive business data in the report.
   Describe the shape of the data, not the value.

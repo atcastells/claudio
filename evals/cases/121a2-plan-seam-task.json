@@ -1,0 +1,1 @@
+{"name":"plan template allows a declared seam task","kind":"file_contains","file":"{root}/skills/sdlc/templates/plan.md","contains":"starts its Task cell with `seam:`"}

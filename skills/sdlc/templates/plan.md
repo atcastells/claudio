@@ -14,10 +14,16 @@ client, the old one is deleted, and `npm test` passes".>
 <When to stop during Build instead of deciding alone. E.g. "an existing test
 fails for a reason unrelated to this change", "the DB schema must change".>
 
+- The task needs to open windows or apps on the developer's screen.
+
 ## Tasks
 
 The *Status* column is updated as each task closes: it is the live list and
 the resume point after compaction or a new session.
+
+A delegated task covers at most 3 plan rows and leaves the tree building with
+its tests green. A task crossing layers that do not build apart
+starts its Task cell with `seam:` and says why.
 
 | # | Task | Files | Test that proves it | Requirement (spec) | Runs on | Depends | Est | Status |
 |---|------|-------|---------------------|--------------------|---------|---------|-----|--------|
@@ -35,6 +41,8 @@ it is the only place `task-actuals` takes a main task's cause from.
 - **Est**: `<minutes>m/<ktokens>k` (`12m/1.2M` allowed), from
   `bash ~/.claude/skills/sdlc/calibrate.sh <repo>`: the median actual of the
   runner when there is history, else the starting table.
+- Task IDs are `T<n>`, optionally with a letter (`T3b`); hooks parse only
+  that form. Phases go in the Task cell, not the ID.
 - Each delegated task's prompt starts with `[sdlc:<slug>/T<n> est=<min>m/<ktok>k]`
   so the `task-actuals` hook can measure it.
 
@@ -76,6 +84,16 @@ If a test fails: fix the code, not the test.
 ## Implementation risks
 
 <What can go wrong when touching this code. Affected callers.>
+
+## Review
+
+Filled in Deploy. A plan is not closed while this section is empty.
+
+- **bugs**: <verdict, important count>
+- **security**: <verdict, important count>
+- **conformance**: <verdict, important count>
+
+Or, when no review runs: `Waiver: <reason> (<who>, <date>)`.
 
 ## Estimate vs actual
 
