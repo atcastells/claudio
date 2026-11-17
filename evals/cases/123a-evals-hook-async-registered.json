@@ -1,0 +1,1 @@
+{"name":"evals hook: registered with asyncRewake and timeout 600, in the template and in a clean install","kind":"hook","script":"evals/scripts/evals-hook-async-test.sh","args":["{root}"],"expect_exit":0,"contains":"all passed","repo_only":true}

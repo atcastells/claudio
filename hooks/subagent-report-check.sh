@@ -21,7 +21,7 @@ report=$(printf '%s' "$payload" | jq -r '.last_assistant_message // ""' 2>/dev/n
 case "$agent" in
   verifier) header='^[[:space:]]*VERDICT: (green|amber|red)'; want='VERDICT: green | amber | red' ;;
   reviewer) header='^[[:space:]]*PASS: (bugs|security|conformance)'; want='PASS: bugs | security | conformance' ;;
-  implementer) header='^[[:space:]]*TASK: [a-z0-9-]+/T[0-9]+[a-z]?'; want='TASK: <slug>/T<n>' ;;
+  implementer) header='^[[:space:]]*TASK: [a-z0-9-]+/T[0-9]+[a-z]?([[:space:]:.,*]|$)'; want='TASK: <slug>/T<n>' ;;
   *) exit 0 ;;
 esac
 if [ "$tool" = SubagentHandback ]; then
@@ -40,8 +40,27 @@ else
 fi
 
 problems=()
-printf '%s\n' "$report" | grep -qaE "$header" || problems+=("no '$want' line")
+if ! printf '%s\n' "$report" | grep -qaE "$header"; then
+  if [ "$agent" = implementer ]; then
+    problems+=("no '$want' line (task IDs are T<n> with an optional letter, e.g. T3b; phases go in the Task cell, not the ID)")
+  else
+    problems+=("no '$want' line")
+  fi
+fi
 if [ "$agent" = implementer ]; then
+  red_ok=false
+  while IFS= read -r line; do
+    after=${line#*→}
+    after=$(printf '%s' "$after" | tr '[:upper:]' '[:lower:]' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+    # Output that opens with an admission ("not seen", "none.", "passed") is not red
+    case "$after" in
+      ""|"not seen"*|"n/a"*|"no"|"no"[!a-z]*|"none"|"none"[!a-z]*|"pass"|"pass"[!a-z]*|"passed"*|"green"*) ;;
+      *) red_ok=true; break ;;
+    esac
+  done < <(printf '%s\n' "$report" | grep -aE '^[[:space:]]*(Red|Mutation): .*→')
+  # A blocked task may stop before any test exists
+  printf '%s\n' "$report" | grep -qaE '^[[:space:]]*RESULT: blocked([[:space:]]|$)' && red_ok=true
+  [ "$red_ok" = true ] || problems+=("no 'Red: <command> → <failing output>' or 'Mutation: <what was broken> → <failing output>' line with literal output")
   printf '%s\n' "$report" | grep -qaE '^[[:space:]]*RESULT: (done|blocked)([[:space:]]|$)' || problems+=("no 'RESULT: done | blocked' line")
   printf '%s\n' "$report" | grep -qaE '^[[:space:]]*Deviation cause: .+' || problems+=("no 'Deviation cause:' line (use 'none' if there was no deviation)")
 fi

@@ -31,7 +31,9 @@ if [ -z "${RELEASE_APPROVAL:-}" ]; then
 
 ${WF_POLICY_NAME:-Workflow policy}: the agent never acts on production. Production
 releases are run by the release manager, not the agent. If this is a false
-positive (the word 'prod' appears in another context), rephrase the command." >&2
+positive (the word 'prod' appears in another context), rephrase the command.
+To write a file, use Write or Edit instead of a heredoc: their content is
+never scanned as a command." >&2
   exit 2
 fi
 

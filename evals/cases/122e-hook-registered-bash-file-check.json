@@ -1,0 +1,1 @@
+{"name": "bash-file-check registered in settings", "kind": "file_contains", "file": "{root}/settings.json", "contains": "hooks/bash-file-check.sh", "file_repo": "{root}/settings.template.json"}

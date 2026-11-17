@@ -1,0 +1,1 @@
+{"name":"implementer starts and stops background processes in one command","kind":"file_contains","file":"{root}/agents/implementer.md","contains":"started and stopped in the same command"}

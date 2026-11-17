@@ -1,0 +1,1 @@
+{"name":"plan template asks before opening windows","kind":"file_contains","file":"{root}/skills/sdlc/templates/plan.md","contains":"needs to open windows or apps on the developer's screen"}

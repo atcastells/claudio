@@ -1,0 +1,1 @@
+{"name":"sdlc: a partial subagent output is resumed, not relaunched","kind":"file_contains","file":"{root}/skills/sdlc/SKILL.md","contains":"resume it with SendMessage; do not relaunch it"}

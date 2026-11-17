@@ -1,0 +1,1 @@
+{"name":"verifier never changes repo files; shell writes only to temp files","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"never change repo files; shell writes only to temp files"}

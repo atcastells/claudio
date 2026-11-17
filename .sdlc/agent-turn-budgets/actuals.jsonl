@@ -1,0 +1,4 @@
+{"task":"T1","event":"start","ts":"2026-11-16T08:46:05Z"}
+{"task":"T1","runs_on":"main","model":"claude-opus-5-5","est_min":4,"est_ktok":1500,"min":4.5,"ktok":3511,"dev_min_pct":13,"dev_tok_pct":134,"flag":true,"cause":"two extra doc reads, a claude.dev check the developer asked for, and a question to the developer; findings below","date":"2026-11-16"}
+{"task":"T4","event":"start","ts":"2026-11-16T08:50:40Z"}
+{"task":"T4","runs_on":"main","model":"claude-opus-5-5","est_min":3,"est_ktok":1200,"min":5.1,"ktok":1927,"dev_min_pct":70,"dev_tok_pct":61,"flag":true,"cause":"needles wrapped across lines, rewrapped; `verifier` to 60 too and `75c` replaced, per the T1 decision; 118c1–c6 red then green, suite 299/0","date":"2026-11-16"}

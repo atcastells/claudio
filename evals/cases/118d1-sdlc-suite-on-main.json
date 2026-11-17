@@ -1,0 +1,1 @@
+{"name":"sdlc Test stage: main runs the suite and passes the result","kind":"file_contains","file":"{root}/skills/sdlc/SKILL.md","contains":"runs the suite once and passes the result to the"}

@@ -1,0 +1,1 @@
+{"name":"implementer runs git in its own command","kind":"file_contains","file":"{root}/agents/implementer.md","contains":"git in its own command, never chained"}

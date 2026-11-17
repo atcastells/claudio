@@ -1,0 +1,1 @@
+{"name":"bash-file-check: only 50 files and up to 1 MB per file are checked; the skip is reported","kind":"hook","script":"evals/scripts/bash-file-check-test.sh","args":["{root}/hooks/bash-file-check.sh","limits"],"expect_exit":0,"contains":"all passed"}

@@ -57,6 +57,12 @@ case "$scen" in
       printf '%s\n' '| # | Est | Status |' '|---|---|---|' '| T1 | 3m | pending |'; } > "$repo/.sdlc/a/plan.md"
     s0=$(date +%s); plan_hint "$repo" || fail "rc"; s1=$(date +%s)
     want 0/1/3; [ $((s1 - s0)) -le 1 ] || fail "long-line: took $((s1 - s0)) s" ;;
+  letter-id)
+    # T<n> with a letter (T2b) is a valid task id: the hint keeps it
+    mkdir -p "$repo/.sdlc/a"
+    printf '%s\n' '| # | Est | Status |' '|---|---|---|' '| T1 | 3m | done |' '| T2b | 4m | in progress |' > "$repo/.sdlc/a/plan.md"
+    plan_hint "$repo" || fail "rc"
+    [ "$PH_TASK/$PH_EST" = "T2b/4" ] || fail "letter-id: got $PH_TASK/$PH_EST want T2b/4" ;;
   task-closed|task-nostart)
     plan_hint "$repo" || fail "rc"
     [ "$PH_TASK/$PH_EST" = "T2/6" ] || fail "$scen: got $PH_TASK/$PH_EST want T2/6"
