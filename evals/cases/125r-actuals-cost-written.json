@@ -1,0 +1,1 @@
+{"name":"task-actuals: integrator artifact cost written","kind":"hook","script":"evals/scripts/actuals-cost-test.sh","args":["{root}/hooks","written"],"expect_exit":0,"contains":"all passed"}

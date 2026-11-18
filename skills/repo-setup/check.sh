@@ -106,6 +106,7 @@ fi
 if [ -f .gitignore ]; then
   grep -qE '^\.env' .gitignore && ok ".gitignore covers .env*" || ko ".gitignore does not cover .env*"
   grep -qE '\.(keystore|p12|jks)' .gitignore && ok ".gitignore covers keystores/p12" || wn ".gitignore does not mention *.keystore / *.p12"
+  grep -qF '.sdlc/*/work/' .gitignore && ok ".gitignore ignores .sdlc/*/work/" || wn ".gitignore does not ignore .sdlc/*/work/ (Orchestrate mode artifacts)"
 else
   ko ".gitignore does not exist"
 fi

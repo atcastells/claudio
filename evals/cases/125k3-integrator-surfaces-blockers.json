@@ -1,0 +1,1 @@
+{"name":"integrator puts blocked and red findings in the summary","kind":"file_contains","file":"{root}/agents/integrator.md","contains":"A blocked task or a red finding from a nested agent always goes in the summary"}

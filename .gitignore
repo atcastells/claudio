@@ -9,3 +9,6 @@ profiles/*
 .env
 .env.*
 .DS_Store
+
+# Orchestrate mode working artifacts (promoted ones are committed elsewhere)
+.sdlc/*/work/

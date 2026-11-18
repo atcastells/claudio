@@ -1,0 +1,1 @@
+{"name":"reviewer cannot launch agents (chain stays at two levels)","kind":"file_contains","file":"{root}/agents/reviewer.md","contains":"disallowedTools: Agent"}

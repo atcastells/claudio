@@ -1,0 +1,1 @@
+{"name":"integrator runs at effort medium","kind":"file_contains","file":"{root}/agents/integrator.md","contains":"effort: medium"}

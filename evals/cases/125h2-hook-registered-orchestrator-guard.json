@@ -1,0 +1,1 @@
+{"name":"orchestrator-guard registered in settings","kind":"file_contains","file":"{root}/settings.json","contains":"hooks/orchestrator-guard.sh","file_repo":"{root}/settings.template.json"}

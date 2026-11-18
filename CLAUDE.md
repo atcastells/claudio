@@ -25,7 +25,7 @@ bash -n hooks/*.sh hooks/lib/*.sh install.sh evals/run.sh scripts/*.sh status-li
 - `README.md` is for non-technical users (case 116a: no jargon above
   `## Technical details`); `docs/install.md` is what their agent follows;
   `docs/technical.md` holds the rest.
-- `skills/{sdlc,intent,repo-setup,rules,workflow-install,vibe}`, `agents/`.
+- `skills/{sdlc,intent,repo-setup,rules,workflow-install,vibe,orchestrate}`, `agents/`.
 - `evals/cases/*.json`, `evals/fixtures/`, `evals/scripts/`. `run.sh` tests the
   root above it: the repo here, `~/.claude` once installed. `file_repo` = path
   in the repo when it differs from the installed one; `repo_only` = skipped

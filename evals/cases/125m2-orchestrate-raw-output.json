@@ -1,0 +1,1 @@
+{"name":"orchestrate skill: raw output is never persisted","kind":"file_contains","file":"{root}/skills/orchestrate/SKILL.md","contains":"raw-output is never persisted"}

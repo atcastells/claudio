@@ -1,0 +1,1 @@
+{"name":"scout cannot launch agents (chain stays at two levels)","kind":"file_contains","file":"{root}/agents/scout.md","contains":"disallowedTools: Agent"}

@@ -1,0 +1,1 @@
+{"name":"report-check integrator: good","kind":"hook","script":"evals/scripts/report-integrator-test.sh","args":["{root}/hooks","good"],"expect_exit":0,"contains":"all passed"}

@@ -1,0 +1,1 @@
+{"name":"integrator tags nested prompts with letter task ids","kind":"file_contains","file":"{root}/agents/integrator.md","contains":"[sdlc:<slug>/T<n>a est="}

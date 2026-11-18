@@ -28,9 +28,10 @@ EFFORT=$(echo "$input" | jq -r '.effort.level // empty')
 SESSION_ID=$(echo "$input" | jq -r '.session_id // empty')
 
 # Workflow mode (Spec by default; Vibe only with a valid id and its marker)
-MODE_VIBE=0
+MODE_VIBE=0; MODE_ORCH=0
 if . "$(dirname "$0")/hooks/lib/mode.sh" 2>/dev/null; then
   mode_is_vibe "$SESSION_ID" && MODE_VIBE=1
+  mode_is_orch "$SESSION_ID" 2>/dev/null && MODE_ORCH=1
 fi
 
 # ── Format values ───────────────────────────────────
@@ -109,6 +110,7 @@ if [ "$MODE_VIBE" = 1 ]; then
 else
   LINE+="${SEP}${DIM}Spec${R}"
 fi
+[ "$MODE_ORCH" = 1 ] && LINE+=" ${BOLD}${MAGENTA}Orch${R}"
 [ -n "$PLAN_PART" ] && LINE+="${SEP}${PLAN_PART}"
 LINE+="${SEP}${BLUE}📁 ${FOLDER}${R}"
 [ -n "$GIT_PART" ] && LINE+="${SEP}${GIT_PART}"

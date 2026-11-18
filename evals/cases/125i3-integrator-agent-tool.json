@@ -1,0 +1,1 @@
+{"name":"integrator can launch the nested agents","kind":"file_contains","file":"{root}/agents/integrator.md","contains":"tools: Read, Glob, Grep, Bash, Edit, Write, Agent"}

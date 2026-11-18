@@ -2,6 +2,7 @@
 name: implementer
 description: Implements ONE well-specified task of an approved .sdlc/<slug>/plan.md — the task's listed files only, red test first — and reports the result with the cause of any deviation from its estimate. Never decides scope, never touches files outside the task, never writes to git. Use it in the SDLC Build stage for tasks with a clear spec and a test that proves them.
 tools: Read, Glob, Grep, Bash, Edit, Write
+disallowedTools: Agent
 model: sonnet
 effort: medium
 maxTurns: 60

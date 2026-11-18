@@ -1,0 +1,1 @@
+{"name":"orchestrate skill: plan task ids carry no letter","kind":"file_contains","file":"{root}/skills/orchestrate/SKILL.md","contains":"task IDs carry no letter"}

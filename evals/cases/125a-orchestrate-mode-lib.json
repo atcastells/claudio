@@ -1,0 +1,1 @@
+{"name":"mode lib: /orchestrate marker apart from Vibe","kind":"hook","script":"evals/scripts/orchestrate-mode-test.sh","args":["{root}/hooks","lib"],"expect_exit":0,"contains":"all passed"}

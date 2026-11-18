@@ -93,6 +93,17 @@ subagent_stop() {
        | group_by(.message.id) | map(last)) as $msgs
     | ([$msgs[] | .message.usage | (.input_tokens // 0) + (.output_tokens // 0)
         + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)] | add // 0) as $tok
+    # usd_min: a floor, output tokens are not in transcripts. $/M tokens
+    # (input, output, cache read); cache writes at 1.25x input; unknown model = null
+    | {"claude-fable-5-2": [8, 40, 0.2], "claude-opus-5-5": [4, 20, 0.2],
+       "claude-sonnet-5-5": [2, 10, 0.1]} as $price
+    | ([$msgs[] | ($price[.message.model? // ""]) as $p
+        | if $p == null then null else .message.usage
+          | ((.input_tokens // 0) * $p[0] + (.output_tokens // 0) * $p[1]
+             + (.cache_creation_input_tokens // 0) * $p[0] * 1.25
+             + (.cache_read_input_tokens // 0) * $p[2]) / 1000000 end]) as $usds
+    | (if ($usds | length) > 0 and ($usds | all(. != null))
+       then ($usds | add * 100 | round / 100) else null end) as $usd
     | ((($t | last | ts) - ($t | first | ts)) / 60 | r1) as $min
     | (($tok / 1000) | round) as $ktok
     | dev($min; $em) as $dm | dev($ktok; $ek) as $dt
@@ -101,7 +112,7 @@ subagent_stop() {
     | {slug: $tag.slug,
        rec: {task: $tag.task, runs_on: $agent,
              model: ([$l[] | select(.type == "assistant") | .message.model? // empty] | first // ""),
-             est_min: $em, est_ktok: $ek, min: $min, ktok: $ktok,
+             est_min: $em, est_ktok: $ek, min: $min, ktok: $ktok, usd_min: $usd,
              dev_min_pct: $dm, dev_tok_pct: $dt,
              flag: (($dm | fabs) > 50 or ($dt | fabs) > 50), cause: $cause,
              date: ($t | last | .[0:10])}}
@@ -115,6 +126,36 @@ subagent_stop() {
   [ -n "$line" ] || return 0
   append_log "$logf" "$line" "$aid"
   machine_append "$line" "$cwd" "$aid"
+  [ "$agent" = integrator ] && stamp_cost "$cwd" "$slug" "$logf" "$line" "$report"
+  return 0
+}
+
+# stamp_cost <cwd> <slug> <log> <record> <report>: Orchestrate mode. Writes
+# "cost: {tokens_k, usd_min, minutes, agents}" into the integrator's artifact:
+# its own record plus the nested agents it tagged T<n>a, T<n>b... Rewrites the
+# frontmatter's cost line, never appends. Silent on any problem.
+stamp_cost() {
+  local cwd="$1" slug="$2" log="$3" rec="$4" report="$5" apath art cost tmp
+  apath=$(printf '%s\n' "$report" | sed -nE 's/^[[:space:]]*ARTIFACT:[[:space:]]*([^[:space:]]+).*/\1/p' | head -n 1)
+  printf '%s' "$apath" | grep -qE "^\.sdlc/$slug/work/[A-Za-z0-9_.-]+\.md$" || return 0
+  art="$cwd/$apath"
+  [ -f "$art" ] && [ ! -L "$art" ] || return 0
+  cost=$(jq -R -r -n --argjson own "$rec" '
+    [inputs | fromjson? | select(type == "object")] as $all
+    | ($own.task | sub("[a-z]$"; "")) as $base
+    | [$all[] | select((.task? // "") | test("^" + $base + "[a-z]$"))] as $nested
+    | ([$own] + $nested) as $r
+    | ([$r[] | .usd_min] | if all(. != null) then (add * 100 | round / 100 | tostring) else "null" end) as $usd
+    | "cost: {tokens_k: \([$r[] | .ktok // 0] | add), usd_min: \($usd), minutes: \($own.min), agents: \($r | length)}"
+  ' "$log" 2>/dev/null) || return 0
+  [ -n "$cost" ] || return 0
+  tmp=$(mktemp "$art.XXXXXX" 2>/dev/null) || return 0
+  if awk -v c="$cost" 'NR == 1 { fm = ($0 == "---") } fm && NR > 1 && $0 == "---" { fm = 0 }
+      fm && /^cost:/ { print c; skip = 1; next } skip && /^[[:space:]]/ { next } { skip = 0; print }' "$art" > "$tmp"; then
+    mv "$tmp" "$art" 2>/dev/null || rm -f "$tmp"
+  else
+    rm -f "$tmp"
+  fi
   return 0
 }
 
