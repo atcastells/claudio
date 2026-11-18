@@ -7,6 +7,7 @@
 ```bash
 <build>       # <what output means it is fine; how long it takes>
 <test>        # <how many tests; what is normal>
+<one test>    # <one test or file: use it while iterating; the suite once, at the end>
 <lint>        # <>
 <start>       # <>
 ```
@@ -21,6 +22,8 @@
 - <naming, aliases, the repo's own patterns>
 - Tests are mandatory for business logic. Before proposing a commit: `<test>`
   and `<lint>`.
+- Keep test output in a file (`2>&1 | tee`) and read it from there; do not
+  run a test again if nothing changed.
 
 ## Security
 

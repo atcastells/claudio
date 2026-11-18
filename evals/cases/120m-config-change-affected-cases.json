@@ -1,0 +1,1 @@
+{"name":"evals-on-config-change runs the cases that name the file","kind":"file_contains","file":"{root}/hooks/evals-on-config-change.sh","contains":"EVALS_ONLY"}

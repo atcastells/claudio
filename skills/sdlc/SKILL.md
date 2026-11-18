@@ -82,7 +82,8 @@ Once approved, write `.sdlc/<slug>/context.md` from `templates/context.md`
 (you are its only writer) and implement wave by wave: launch a wave's
 subagents in one message, each prompt's first line
 `[sdlc:<slug>/T<n> est=<min>m/<ktok>k]` (the `task-actuals` hook measures
-it), then "read context.md first". After the wave compare `git diff --stat`
+it), then "read context.md first". After the wave run the suite once (output
+to a file, its path to the verifier), compare `git diff --stat`
 with the plan's files, read every diff, and fold the reports' `Learned:`
 lines into `context.md` (no duplicates, ≤ 30 lines, no sensitive data).
 TDD: red test first. If a test fails, **fix the code, not the test**.
@@ -143,17 +144,17 @@ guides and "what a task costs" (claude.dev, 2026).
   or connecting MCP servers rewrites it; do it at the start or after a cut.
   Effort is different: with an API key or subscription, changing it keeps the
   cache on Opus 5.5; on Bedrock, Vertex or a gateway it clears it.
-- **Effort and model ladder.** `medium` by default → `high` if it gets stuck →
-  `xhigh` for complex problems → `/advisor fable` (Fable advises at decision
-  points, the cache stays) → Fable 5.1 as the main model only if Opus 5.5
-  still fails twice at `xhigh`. Lower effort with the setting, not by asking
-  the prompt to "think less".
-- **Down the ladder.** Lookups, logs and test output → `scout` (Haiku 5.5),
-  in short tasks: over 100K prompt tokens it costs 5×. Haiku never edits. A
-  task with a clear spec, listed files and a proving test → `implementer`
-  (Sonnet 5.5, half the main model's price); verification and review →
-  `verifier` / `reviewer` (Sonnet 5.5); integration, decisions and unclear
-  code stay in the main session. Pin each agent's `model` in its definition; do not set
+- **Effort and model ladder.** `medium` by default → `high` after two failed
+  attempts → `xhigh` for complex problems → `/advisor` with Fable 5.2 at
+  decision points (it advises and returns a plan, Opus keeps executing; the
+  cache stays). Lower effort with the setting, not by asking for less.
+- **Down the ladder.** A lookup that needs more than two searches, or a file
+  you cannot place, logs and test output → `scout` (Haiku 5.5): ask for paths
+  and lines, not contents; over 100K prompt tokens it costs 5×.
+  Haiku never edits. A task with a clear spec, listed files and a test →
+  `implementer` (Sonnet 5.5); verification and review → `verifier` /
+  `reviewer` (Sonnet 5.5); integration, decisions and unclear code stay in
+  the main session. Pin each agent's `model` in its definition; do not set
   `CLAUDE_CODE_SUBAGENT_MODEL`, which moves every agent at once. Check the
   evidence of each subagent (open the file:line it cites) and consolidate.
 - **Measure, do not estimate**: `/usage` gives the real cost of the session.

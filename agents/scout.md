@@ -3,7 +3,7 @@ name: scout
 description: Finds and reads for the main session — where something is defined or used, what a log, a test run or a config says — and returns a short summary that cites file:line. Read-only; does not edit or judge changes.
 tools: Read, Glob, Grep, Bash
 model: haiku
-effort: medium
+effort: low
 maxTurns: 15
 ---
 

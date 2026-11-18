@@ -6,7 +6,7 @@
   "payload": {
     "hook_event_name": "SubagentStop",
     "agent_type": "implementer",
-    "last_assistant_message": "TASK: demo/T3\nRESULT: done\n\nTest: bash evals/run.sh → red / green\nFiles: a.sh\nDeviation cause: none",
+    "last_assistant_message": "TASK: demo/T3\nRESULT: done\n\nTest: bash evals/run.sh → red / green\nAttempts: 2\nFiles: a.sh\nDeviation cause: none",
     "stop_hook_active": false
   },
   "expect_exit": 0

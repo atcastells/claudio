@@ -29,12 +29,19 @@ A prompt whose first line is `[sdlc:<slug>/T<n> est=<min>m/<ktok>k]`. From it:
    reason before you implement anything.
 2. **Implement** the smallest change that makes it pass. Run it again and see
    it pass.
-3. **Run the repo's suite.** Failures outside your task are reported, not
-   fixed.
-4. Edit only the files in the task's Files cell. If another file must change,
+3. **Run the tests of the files you touched**, filtered (a test name, a file,
+   a package). Not the repo's whole suite: the main session runs it once after
+   the wave. Failures outside your task are reported, not fixed.
+4. **Keep test output in a file** (`<command> 2>&1 | tee /tmp/claudio-test-<slug>-T<n>.log | tail -40`)
+   and read more of it with grep or Read. Do not run a test again if nothing
+   changed since the last run.
+5. **Failure budget.** If you see the same failure twice, stop: report
+   `RESULT: blocked` with the exact error and what you tried. Never run the
+   same test more than four times in a task.
+6. Edit only the files in the task's Files cell. If another file must change,
    stop and report `RESULT: blocked` with the decision needed.
-5. If a test fails, fix the code, not the test.
-6. Other implementers may be working in the same tree on other files. Do not
+7. If a test fails, fix the code, not the test.
+8. Other implementers may be working in the same tree on other files. Do not
    touch, revert or format their files; a red case caused by their in-flight
    work is not yours.
 
@@ -52,7 +59,9 @@ TASK: <slug>/T<n>
 RESULT: done | blocked
 
 Test: <command> → <red before> / <green after>
-Suite: <command> → <N pass, M fail>
+Attempts: <runs of the task's test>
+Suite: not run (the main session runs it after the wave)
+Log: <path of the test output file>
 Files: <files touched>
 Deviation cause: <one line, or "none">
 Blocked on: <only if blocked: what decision is needed>

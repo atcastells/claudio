@@ -1,0 +1,1 @@
+{"name":"implementer: failure budget (same failure twice, four runs)","kind":"file_contains","file":"{root}/agents/implementer.md","contains":"same failure twice"}

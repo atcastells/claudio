@@ -57,6 +57,13 @@ scripts that do not exist. Applied as is.
   filled in** from `package.json` / `Makefile` / `composer.json`. A skeleton
   with an unfilled `<build>` is not a CLAUDE.md, it is a pending task. Write it
   in the language the installed rules ask for.
+  Fill `<one test>` too: how to run one test or one file, which is what the
+  agent uses while it iterates; the whole suite is for the end. In a repo
+  with `Cargo.toml`: `cargo check --tests` after an edit (compile errors
+  without linking every test binary), `cargo nextest run -p <crate> <filter>`
+  while iterating (`cargo test <filter>` if nextest is not installed; offer
+  `cargo install cargo-nextest --locked`), and `cargo nextest run --workspace`
+  plus `cargo test --doc` once at the end.
 - `.gitignore` without `.env*` → append the lines, do not rewrite the file.
 - `.claude/workflow.json` → `templates/workflow.json`, with `workflow_version`
   = `~/.claude/workflow/VERSION` and today's date. It records which workflow

@@ -120,7 +120,7 @@
           {
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/evals-on-config-change.sh\"",
-            "timeout": 15
+            "timeout": 120
           }
         ]
       },
