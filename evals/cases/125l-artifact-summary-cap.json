@@ -1,0 +1,1 @@
+{"name":"artifact template caps the summary at 15 lines","kind":"file_contains","file":"{root}/skills/sdlc/templates/artifact.md","contains":"at most 15 lines"}

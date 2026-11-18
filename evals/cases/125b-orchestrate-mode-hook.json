@@ -1,0 +1,1 @@
+{"name":"mode hook: /orchestrate toggles its marker, re-injected after compact and resume","kind":"hook","script":"evals/scripts/orchestrate-mode-test.sh","args":["{root}/hooks","hook"],"expect_exit":0,"contains":"all passed"}

@@ -1,0 +1,1 @@
+{"name":"report-check integrator: no-artifact","kind":"hook","script":"evals/scripts/report-integrator-test.sh","args":["{root}/hooks","no-artifact"],"expect_exit":0,"contains":"all passed"}

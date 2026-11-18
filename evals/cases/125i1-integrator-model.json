@@ -1,0 +1,1 @@
+{"name":"integrator runs on opus","kind":"file_contains","file":"{root}/agents/integrator.md","contains":"model: opus"}

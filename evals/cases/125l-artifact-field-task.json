@@ -1,0 +1,1 @@
+{"name":"artifact template has the task field","kind":"file_contains","file":"{root}/skills/sdlc/templates/artifact.md","contains":"task:"}

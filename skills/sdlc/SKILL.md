@@ -157,4 +157,4 @@ guides and "what a task costs" (claude.dev, 2026).
   5.5); integration, decisions and unclear code stay in the main session. Pin each agent's `model` in its definition; do not set
   `CLAUDE_CODE_SUBAGENT_MODEL`, which moves every agent at once. Check the
   evidence of each subagent (open the file:line it cites) and consolidate.
-- **Measure, do not estimate**: `/usage` gives the real cost of the session.
+- **Measure, do not estimate**: `/usage` gives the real cost of the session. Orchestrate mode: the `orchestrate` skill.

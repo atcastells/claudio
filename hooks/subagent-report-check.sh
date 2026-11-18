@@ -22,6 +22,7 @@ case "$agent" in
   verifier) header='^[[:space:]]*VERDICT: (green|amber|red)'; want='VERDICT: green | amber | red' ;;
   reviewer) header='^[[:space:]]*PASS: (bugs|security|conformance)'; want='PASS: bugs | security | conformance' ;;
   implementer) header='^[[:space:]]*TASK: [a-z0-9-]+/T[0-9]+[a-z]?([[:space:]:.,*]|$)'; want='TASK: <slug>/T<n>' ;;
+  integrator) header='^[[:space:]]*ARTIFACT: '; want='ARTIFACT: .sdlc/<slug>/work/<file>.md' ;;
   *) exit 0 ;;
 esac
 if [ "$tool" = SubagentHandback ]; then
@@ -64,6 +65,23 @@ if [ "$agent" = implementer ]; then
   printf '%s\n' "$report" | grep -qaE '^[[:space:]]*RESULT: (done|blocked)([[:space:]]|$)' || problems+=("no 'RESULT: done | blocked' line")
   printf '%s\n' "$report" | grep -qaE '^[[:space:]]*Deviation cause: .+' || problems+=("no 'Deviation cause:' line (use 'none' if there was no deviation)")
   printf '%s\n' "$report" | grep -qaE '^[[:space:]]*Attempts: [0-9]+' || problems+=("no 'Attempts: <n>' line (how many times the task's test ran)")
+fi
+if [ "$agent" = integrator ]; then
+  # Orchestrate mode: the report points to an artifact that exists, with its header
+  apath=$(printf '%s\n' "$report" | sed -nE 's/^[[:space:]]*ARTIFACT:[[:space:]]*([^[:space:]]+).*/\1/p' | head -n 1)
+  cwd=$(printf '%s' "$payload" | jq -r '.cwd // ""' 2>/dev/null)
+  if [ -n "$apath" ]; then
+    if ! printf '%s' "$apath" | grep -qE '^\.sdlc/[a-z0-9-]+/work/[A-Za-z0-9_.-]+\.md$' || [ "${apath#*..}" != "$apath" ]; then
+      problems+=("ARTIFACT path '$apath' is not .sdlc/<slug>/work/<file>.md")
+    elif [ -z "$cwd" ] || [ ! -f "$cwd/$apath" ]; then
+      problems+=("ARTIFACT file $apath does not exist: write it from ~/.claude/skills/sdlc/templates/artifact.md")
+    else
+      front=$(awk 'NR == 1 && $0 != "---" { exit } NR > 1 && $0 == "---" { exit } NR > 1 { print }' "$cwd/$apath")
+      for k in task kind result data regen evidence; do
+        printf '%s\n' "$front" | grep -qE "^$k:[[:space:]]*[^[:space:]]" || problems+=("the artifact's frontmatter lacks '$k:'")
+      done
+    fi
+  fi
 fi
 missing=$(printf '%s\n' "$report" | grep -aF '[IMPORTANT]' | grep -avF 'demonstration:')
 [ -n "$missing" ] && problems+=("[IMPORTANT] without 'demonstration:':

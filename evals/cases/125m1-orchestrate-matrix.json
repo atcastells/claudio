@@ -1,0 +1,1 @@
+{"name":"orchestrate skill: persist useful and expensive","kind":"file_contains","file":"{root}/skills/orchestrate/SKILL.md","contains":"| Useful later | Only the regen command and one line in context.md | Persisted, condensed, at its data type's destination |"}

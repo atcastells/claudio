@@ -1,0 +1,1 @@
+{"name":"repo-setup ignores the orchestrate work folder","kind":"file_contains","file":"{root}/skills/repo-setup/SKILL.md","contains":"`.gitignore` without `.env*` or `.sdlc/*/work/`"}

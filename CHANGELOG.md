@@ -5,6 +5,38 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.4.0 — 2026-11-18
+
+Orchestrate mode, opt-in: Fable 5.2 plans and decides, Opus 5.5 does the
+work, and they talk only through artifacts. From the session profile:
+mixed sessions led by Fable 5.2 used about half the weighted tokens per
+agent hour of those led by Opus 5.5 (6 sessions against 114, a correlation),
+but Fable as the main model still spent 19% of its time on tests. Slug
+`.sdlc/fable-orchestrator/`.
+
+- **`/orchestrate` and `/orchestrate off`**: a per-session marker next to
+  Vibe's (independent of Spec/Vibe), re-injected after compact and resume,
+  cleared on startup and clear; the status line shows `Orch`.
+- **New hook `orchestrator-guard.sh`** on `PreToolUse`: in the mode, the
+  main session (no `agent_id`) cannot Edit, Write or run Bash, except
+  writes under `.sdlc/<slug>/` and plain read-only git.
+- **New agent `integrator`** (Opus 5.5, effort medium): takes one task,
+  integrates, and launches `implementer`, `verifier`, `reviewer` and `scout`
+  as nested agents tagged `T<n>a`, `T<n>b`. Those four now carry
+  `disallowedTools: Agent`, so the chain stays at two levels.
+- **Artifacts**: template `skills/sdlc/templates/artifact.md` with `data`
+  (type of information), `cost` and `regen`; the integrator answers with
+  `ARTIFACT: .sdlc/<slug>/work/<file>.md`, which `subagent-report-check`
+  validates (file present, required fields). `task-actuals` writes `cost`
+  (tokens, `usd_min`, minutes, agents, nested agents included) and adds
+  `usd_min` to every record; it is a floor, since transcripts do not carry
+  output tokens.
+- **New skill `orchestrate`**: roles, delegation, how to read an artifact,
+  and the persist-or-discard rule (discard by default; usefulness crossed
+  with the cost of regenerating it; destination by data type).
+- **`/repo-setup`**: `.gitignore` gets `.sdlc/*/work/`; `check.sh` warns
+  without it. Migration `3.4.0`.
+
 ## 3.3.0 — 2026-11-18
 
 Less session time on tests and a clear model hierarchy, from a profile of

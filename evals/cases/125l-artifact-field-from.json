@@ -1,0 +1,1 @@
+{"name":"artifact template has the from field","kind":"file_contains","file":"{root}/skills/sdlc/templates/artifact.md","contains":"from:"}

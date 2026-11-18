@@ -1,0 +1,1 @@
+{"name":"report-check integrator: missing-file","kind":"hook","script":"evals/scripts/report-integrator-test.sh","args":["{root}/hooks","missing-file"],"expect_exit":0,"contains":"all passed"}

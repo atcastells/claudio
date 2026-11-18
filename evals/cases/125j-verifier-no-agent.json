@@ -1,0 +1,1 @@
+{"name":"verifier cannot launch agents (chain stays at two levels)","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"disallowedTools: Agent"}

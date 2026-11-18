@@ -1,0 +1,1 @@
+{"name":"orchestrate skill: discard by default","kind":"file_contains","file":"{root}/skills/orchestrate/SKILL.md","contains":"Discard is the default"}

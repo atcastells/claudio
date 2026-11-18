@@ -64,7 +64,7 @@ scripts that do not exist. Applied as is.
   while iterating (`cargo test <filter>` if nextest is not installed; offer
   `cargo install cargo-nextest --locked`), and `cargo nextest run --workspace`
   plus `cargo test --doc` once at the end.
-- `.gitignore` without `.env*` → append the lines, do not rewrite the file.
+- `.gitignore` without `.env*` or `.sdlc/*/work/` → append the lines, do not rewrite the file.
 - `.claude/workflow.json` → `templates/workflow.json`, with `workflow_version`
   = `~/.claude/workflow/VERSION` and today's date. It records which workflow
   version was applied; without it, the session-start notice cannot tell

@@ -1,0 +1,1 @@
+{"name":"repo-setup check warns without the work folder ignored","kind":"file_contains","file":"{root}/skills/repo-setup/check.sh","contains":".gitignore does not ignore .sdlc/*/work/"}

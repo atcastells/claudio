@@ -25,6 +25,13 @@ The steps an agent follows are in [install.md](install.md).
 - **A faster mode when you are exploring.** `/vibe` switches the session
   from Spec to Vibe: small steps, no approval stops, a mermaid map of the
   project kept up to date, and the status line says which mode you are in.
+- **An opt-in orchestrated mode.** `/orchestrate`, typed at the start of a
+  session on Fable 5.2: the main session only plans and decides; the
+  `integrator` agent (Opus 5.5) does the work, launches the other agents and
+  answers with one artifact in `.sdlc/<slug>/work/` that says what kind of
+  data it holds and what it cost. The main session keeps what is worth
+  keeping and discards the rest. A hook stops the main session from editing
+  or running tests in this mode.
 - **Plan hints in the status line** (terminal): the task in progress
   against its estimate (`T3 4m/6m`, yellow over, red over twice), what is
   left of the plan (`5/12 · ~22m left`), and `compact between tasks` at 70%

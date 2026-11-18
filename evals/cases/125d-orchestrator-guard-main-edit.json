@@ -1,0 +1,1 @@
+{"name":"orchestrator-guard: main-edit","kind":"hook","script":"evals/scripts/orchestrator-guard-test.sh","args":["{root}/hooks","main-edit"],"expect_exit":0,"contains":"all passed"}
