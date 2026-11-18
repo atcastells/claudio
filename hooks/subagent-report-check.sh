@@ -63,6 +63,7 @@ if [ "$agent" = implementer ]; then
   [ "$red_ok" = true ] || problems+=("no 'Red: <command> → <failing output>' or 'Mutation: <what was broken> → <failing output>' line with literal output")
   printf '%s\n' "$report" | grep -qaE '^[[:space:]]*RESULT: (done|blocked)([[:space:]]|$)' || problems+=("no 'RESULT: done | blocked' line")
   printf '%s\n' "$report" | grep -qaE '^[[:space:]]*Deviation cause: .+' || problems+=("no 'Deviation cause:' line (use 'none' if there was no deviation)")
+  printf '%s\n' "$report" | grep -qaE '^[[:space:]]*Attempts: [0-9]+' || problems+=("no 'Attempts: <n>' line (how many times the task's test ran)")
 fi
 missing=$(printf '%s\n' "$report" | grep -aF '[IMPORTANT]' | grep -avF 'demonstration:')
 [ -n "$missing" ] && problems+=("[IMPORTANT] without 'demonstration:':

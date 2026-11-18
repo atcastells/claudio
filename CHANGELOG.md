@@ -5,6 +5,33 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.3.0 — 2026-11-18
+
+Less session time on tests and a clear model hierarchy, from a profile of
+439 local sessions (21% of agent time on tests, 51% of test runs repeated
+with no edit, 55% full-suite runs). Slug `.sdlc/test-time/`.
+
+- **Implementer**: runs its task's test and the tests of the files it
+  touches, not the whole suite; the main session runs the suite once after
+  the wave. Test output goes to a file and is read from there; no test runs
+  again with nothing changed. Failure budget: the same failure twice stops
+  the task as `blocked`, never more than four runs of the same test. New
+  report lines `Attempts: <n>` (required by `subagent-report-check`, next
+  to `Red:`), `Suite: not run` and `Log:`.
+- **Verifier**: in its last step, reads the wave's test output instead of
+  running that suite again.
+- **Model ladder**: ends in `/advisor` with Fable 5.2 (it advises, Opus keeps
+  executing) instead of Fable 5.1 as the main model; `high` after two failed
+  attempts. Lookups needing more than two searches go to the `scout`, which
+  now runs at effort `low` and returns paths and lines.
+- **`/repo-setup`**: `CLAUDE.md` gets a one-test command and the "test output
+  in a file" convention; Rust repos get `cargo check --tests`,
+  `cargo nextest run` filtered while iterating and the workspace at the end.
+  Migration `3.3.0`.
+- **`evals-on-config-change`**: runs only the cases that name the edited file
+  (`EVALS_ONLY` in `run.sh`); shared code or no match still runs the whole
+  suite, and so does a coalesced rerun, which may come from another file.
+
 ## 3.2.0 — 2026-11-16
 
 File edits made through Bash are now checked. In auto mode (the default

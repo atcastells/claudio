@@ -1,0 +1,1 @@
+{"name":"repo-setup: Rust repos get nextest and cargo check","kind":"file_contains","file":"{root}/skills/repo-setup/SKILL.md","contains":"cargo nextest run"}

@@ -94,9 +94,10 @@ no figure reaches the user without a run in which the measurement could have fai
 ## Stage 4 — Test → self-verification
 
 Verify your work before anyone sees it: tests, build, or a screenshot. Main
-runs the suite once and passes the result to the `verifier`, which checks the
-change plus two adjacent flows; it reports, it does not fix. Nothing reaches
-human review with a broken build. A subagent output marked as partial hit its
+runs the suite once and passes the result to the `verifier` (one run after
+the wave, with its output file's path), which checks the change plus two
+adjacent flows; it reports, it does not fix. Nothing reaches human review
+with a broken build. A subagent output marked as partial hit its
 turn limit: resume it with SendMessage; do not relaunch it.
 
 ## Stage 5 — Deploy → PR + findings
@@ -144,17 +145,16 @@ guides and "what a task costs" (claude.dev, 2026).
   or connecting MCP servers rewrites it; do it at the start or after a cut.
   Effort is different: with an API key or subscription, changing it keeps the
   cache on Opus 5.5; on Bedrock, Vertex or a gateway it clears it.
-- **Effort and model ladder.** `medium` by default → `high` if it gets stuck →
-  `xhigh` for complex problems → `/advisor fable` (Fable advises at decision
-  points, the cache stays) → Fable 5.1 as the main model only if Opus 5.5
-  still fails twice at `xhigh`. Lower effort with the setting, not by asking
-  the prompt to "think less".
-- **Down the ladder.** Lookups, logs and test output → `scout` (Haiku 5.5),
-  in short tasks: over 100K prompt tokens it costs 5×. Haiku never edits. A
-  task with a clear spec, listed files and a proving test → `implementer`
-  (Sonnet 5.5, half the main model's price); verification and review →
-  `verifier` / `reviewer` (Sonnet 5.5); integration, decisions and unclear
-  code stay in the main session. Pin each agent's `model` in its definition; do not set
+- **Effort and model ladder.** `medium` by default → `high` after two failed
+  attempts → `xhigh` for complex problems → `/advisor` with Fable 5.2 at
+  decision points (it advises and returns a plan, Opus keeps executing; the
+  cache stays). Lower effort with the setting, not by asking for less.
+- **Down the ladder.** A lookup that needs more than two searches, or a file
+  you cannot place, logs and test output → `scout` (Haiku 5.5): ask for paths
+  and lines, not contents; over 100K prompt tokens it costs 5×.
+  Haiku never edits. A clear spec, listed files and a test → `implementer`
+  (Sonnet 5.5); verification and review → `verifier` / `reviewer` (Sonnet
+  5.5); integration, decisions and unclear code stay in the main session. Pin each agent's `model` in its definition; do not set
   `CLAUDE_CODE_SUBAGENT_MODEL`, which moves every agent at once. Check the
   evidence of each subagent (open the file:line it cites) and consolidate.
 - **Measure, do not estimate**: `/usage` gives the real cost of the session.

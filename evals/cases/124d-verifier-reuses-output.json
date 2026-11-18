@@ -1,0 +1,1 @@
+{"name":"verifier: reuses the wave test output","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"test-output"}

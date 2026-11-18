@@ -1,0 +1,6 @@
+{
+  "name": "implementer: test output to a file, no rerun with nothing changed",
+  "kind": "file_contains",
+  "file": "{root}/agents/implementer.md",
+  "contains": "Do not run a test again"
+}

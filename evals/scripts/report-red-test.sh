@@ -20,7 +20,7 @@ run() {
 }
 
 head=$'TASK: demo/T1\nRESULT: done\n'
-tail=$'\nDeviation cause: none'
+tail=$'\nAttempts: 1\nDeviation cause: none'
 arrow='→'
 
 run "${head}Red: bash t.sh $arrow 1 failed: expected 2, got 0$tail"; rc=$?
@@ -48,12 +48,12 @@ run "${head}Red: x $arrow   $tail"; rc=$?
 run "${head}Red: x without arrow$tail"; rc=$?
 [ "$rc" -eq 2 ] || fail e4 "no arrow: expected 2, got $rc"
 
-run $'TASK: d/A1\nRESULT: done\nRed: x → failed\nDeviation cause: none'; rc=$?
+run $'TASK: d/A1\nRESULT: done\nRed: x → failed\nAttempts: 1\nDeviation cause: none'; rc=$?
 [ "$rc" -eq 2 ] || fail f "TASK d/A1: expected 2, got $rc"
 grep -q 'T<n>' "$tmp/err" || fail f "stderr lacks the T<n> hint"
 grep -q 'Task cell' "$tmp/err" || fail f "stderr lacks the Task cell hint"
 
-run $'TASK: demo/T3b\nRESULT: done\nRed: x → failed\nDeviation cause: none'; rc=$?
+run $'TASK: demo/T3b\nRESULT: done\nRed: x → failed\nAttempts: 1\nDeviation cause: none'; rc=$?
 [ "$rc" -eq 0 ] || fail g "T3b: expected 0, got $rc"
 
 n=$((n+1))
@@ -80,15 +80,15 @@ for t in '1 failed, 3 passed' 'NoneType has no attribute x' 'nothing returned: e
 done
 
 # Punctuation after the id is not a phase
-run $'TASK: demo/T3:\nRESULT: done\nRed: bash t.sh '"$arrow"$' 1 failed\nDeviation cause: none'; rc=$?
+run $'TASK: demo/T3:\nRESULT: done\nRed: bash t.sh '"$arrow"$' 1 failed\nAttempts: 1\nDeviation cause: none'; rc=$?
 [ "$rc" -eq 0 ] || fail n "TASK: demo/T3: expected 0, got $rc"
 
 # A phase glued to the id is not a T<n> id
-run $'TASK: demo/T3-red\nRESULT: done\nRed: bash t.sh '"$arrow"$' 1 failed\nDeviation cause: none'; rc=$?
+run $'TASK: demo/T3-red\nRESULT: done\nRed: bash t.sh '"$arrow"$' 1 failed\nAttempts: 1\nDeviation cause: none'; rc=$?
 [ "$rc" -eq 2 ] || fail k "TASK: demo/T3-red: expected 2, got $rc"
 
 # A blocked task may stop before any test exists: no Red line required
-run $'TASK: demo/T1\nRESULT: blocked\nBlocked on: which schema to use\nDeviation cause: none'; rc=$?
+run $'TASK: demo/T1\nRESULT: blocked\nBlocked on: which schema to use\nAttempts: 0\nDeviation cause: none'; rc=$?
 [ "$rc" -eq 0 ] || fail j "blocked without Red: expected 0, got $rc"
 
 [ "$fails" -eq 0 ] && echo "report red scenarios: all passed" || echo "report red scenarios: $fails failed"

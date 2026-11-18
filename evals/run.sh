@@ -43,6 +43,14 @@ failed_json='[]'
 # WORKFLOW_PROFILE=<dir> adds the profile cases (repo and installed mode)
 case_files=(cases/$pat.json)
 [ -n "$profile" ] && case_files+=("$profile"/evals/cases/$pat.json)
+# EVALS_ONLY="<case> <case>": only those cases (file names without .json)
+if [ -n "${EVALS_ONLY:-}" ]; then
+  _sel=("cases/__none__.json")
+  for f in "${case_files[@]}"; do
+    case " $EVALS_ONLY " in *" $(basename "$f" .json) "*) _sel+=("$f") ;; esac
+  done
+  case_files=("${_sel[@]}")
+fi
 
 for f in "${case_files[@]}"; do
   [ -e "$f" ] || continue

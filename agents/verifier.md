@@ -20,8 +20,11 @@ else does the fixing. If you fix, you contaminate the verification.
    have broken with no test covering it. Find them by grepping the callers of
    what was touched.
 4. **Run the verification**: build, tests, lint,
-   unless the prompt already gives its result (then cite it). The repo's real commands, not the ones
-   you assume. Then the incident evals of this repo:
+   unless the prompt already gives its result (then cite it) or the path of a
+   test output from after the last change (the wave's suite, in its
+   test-output log: read it instead of running that suite again). The repo's
+   real commands, not the ones you assume. Keep your own output in a file
+   (`2>&1 | tee`) and grep it rather than rerunning. Then the incident evals of this repo:
    `EVALS_REPO="$(git rev-parse --show-toplevel)" bash ~/.claude/evals/run.sh`
    (`PASS: 0 FAIL: 0` = none); a failure makes the verdict red.
 

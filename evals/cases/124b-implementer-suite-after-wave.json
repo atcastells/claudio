@@ -1,0 +1,1 @@
+{"name":"implementer: suite runs once after the wave","kind":"file_contains","file":"{root}/agents/implementer.md","contains":"Suite: not run"}

@@ -25,6 +25,31 @@ if [ -z "$suite" ] && [ -n "$src" ]; then
 fi
 [ -z "$suite" ] && exit 0
 
+# Only the cases that name the edited file (path, or hook name for hooks/).
+# Shared code (hooks/lib, run.sh, settings, VERSION) or no match: whole suite.
+if [ -n "$src" ] && [ "$suite" = "$src/evals/run.sh" ]; then
+  rel="${path#"$src"/}"
+else
+  rel="${path#*/.claude/}"
+fi
+profile_dir=$(cat "$home/profile" 2>/dev/null)
+only=""
+case "$rel" in
+  hooks/lib/*|evals/run.sh|settings*.json|VERSION) ;;
+  *)
+    cdirs=("$(dirname "$suite")/cases")
+    [ -d "$profile_dir/evals/cases" ] && cdirs+=("$profile_dir/evals/cases")
+    for d in "${cdirs[@]}"; do
+      for c in "$d"/*.json; do
+        [ -e "$c" ] || continue
+        if grep -qF -- "$rel" "$c" || { case "$rel" in hooks/*) grep -qE "\"hook\" *: *\"$(basename "$rel")\"" "$c" ;; *) false ;; esac; }; then
+          only="$only $(basename "$c" .json)"
+        fi
+      done
+    done ;;
+esac
+export EVALS_ONLY="${only# }"
+
 # Never recurse: the suite itself writes nothing, but be explicit about it.
 [ -n "${CLAUDE_EVALS_RUNNING:-}" ] && exit 0
 export CLAUDE_EVALS_RUNNING=1
@@ -104,11 +129,12 @@ if [ "$locked" -eq 0 ]; then
 fi
 
 # Source repo: also run the installed profile's cases
-profile_dir=$(cat "$home/profile" 2>/dev/null)
 runs=0
 capped=0
 while :; do
   runs=$((runs + 1))
+  # A coalesced rerun may come from another edited file: whole suite
+  [ "$runs" -gt 1 ] && EVALS_ONLY=""
   if [ "$locked" -eq 1 ]; then outf="$lock/out"; rm -f "$lock/pending"; else outf="$work/out"; fi
   if [ -n "$src" ] && [ "$suite" = "$src/evals/run.sh" ] && [ -d "$profile_dir" ]; then
     EVALS_SKIP_REPO=1 WORKFLOW_PROFILE="$profile_dir" bash "$suite" >"$outf" 2>&1 &

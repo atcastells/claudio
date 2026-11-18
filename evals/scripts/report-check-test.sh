@@ -11,7 +11,7 @@ fails=0
 fail() { echo "  FAIL $1: $2"; fails=$((fails+1)); }
 
 bad=$'TASK: demo/T1\nRESULT: done\nFiles: a.sh'
-good=$'TASK: demo/T1\nRESULT: done\nRed: bash t.sh → 1 failed\nDeviation cause: none'
+good=$'TASK: demo/T1\nRESULT: done\nRed: bash t.sh → 1 failed\nAttempts: 1\nDeviation cause: none'
 
 # pre <tool> <agent_type> <agent_id> <message> -> exit code of the hook
 pre() {

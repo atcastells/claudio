@@ -1,0 +1,1 @@
+{"name":"run.sh: EVALS_ONLY runs only the named cases","kind":"hook","script":"evals/scripts/evals-only-test.sh","args":["{root}/evals/run.sh"],"expect_exit":0,"contains":"all passed"}
