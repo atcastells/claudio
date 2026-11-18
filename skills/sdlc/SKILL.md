@@ -32,10 +32,7 @@ which artifacts exist in `.sdlc/<slug>/` and propose the next stage without
 writing anything yet; if several slugs are open, ask which one.
 
 **Never skip a stage.** If the input artifact is missing, say so and offer to
-write it. A `plan.md` without a `spec.md` is a plan built on invented
-assumptions.
-
----
+write it. A `plan.md` without a `spec.md` is built on invented assumptions.
 
 ## Stage 1 — Plan → `intent.md`
 
@@ -82,21 +79,26 @@ Once approved, write `.sdlc/<slug>/context.md` from `templates/context.md`
 (you are its only writer) and implement wave by wave: launch a wave's
 subagents in one message, each prompt's first line
 `[sdlc:<slug>/T<n> est=<min>m/<ktok>k]` (the `task-actuals` hook measures
-it), then "read context.md first". After the wave run the suite once (output
-to a file, its path to the verifier), compare `git diff --stat`
+it), then "read context.md first". After the wave compare `git diff --stat`
 with the plan's files, read every diff, and fold the reports' `Learned:`
 lines into `context.md` (no duplicates, ≤ 30 lines, no sensitive data).
-TDD: red test first. If a test fails, **fix the code, not the test**.
+TDD: red test first. If a test fails, **fix the code, not the test**. Agents
+edit repo files with Edit or Write; shell only for temp files (hooks see it).
 
 Close each task in its *Status* column (done, in progress, blocked + note):
-the live list, the resume point and the clock of `main` tasks. At Build close
-fill *Estimate vs actual* from `actuals.jsonl`: estimates, not people.
+the live list, the resume point and the clock of `main` tasks; track
+orchestration on `main` rows so it is measured too. At Build close fill
+*Estimate vs actual* from `actuals.jsonl`: estimates, not people. And
+no figure reaches the user without a run in which the measurement could have failed.
 
 ## Stage 4 — Test → self-verification
 
-Verify your work before anyone sees it: tests, build, or a screenshot. Use
-the `verifier` subagent to check the change plus two adjacent flows; it
-reports, it does not fix. Nothing reaches human review with a broken build.
+Verify your work before anyone sees it: tests, build, or a screenshot. Main
+runs the suite once and passes the result to the `verifier` (one run after
+the wave, with its output file's path), which checks the change plus two
+adjacent flows; it reports, it does not fix. Nothing reaches human review
+with a broken build. A subagent output marked as partial hit its
+turn limit: resume it with SendMessage; do not relaunch it.
 
 ## Stage 5 — Deploy → PR + findings
 
@@ -105,8 +107,8 @@ Read the repo's `REVIEW.md` (if missing, offer to create it from
 against `spec.md` + `plan.md`. Launch three `reviewer` subagents in parallel,
 one per pass (`bugs`, `security`, `conformance`); you consolidate: open every
 cited file:line, drop duplicates, keep the 5 nits that matter most. A dynamic
-workflow for the review only when the user asks for one: it costs several
-times a subagent review.
+workflow only when the user asks (it costs several subagent reviews). A plan
+is not closed while its *Review* section is empty: verdicts or a waiver.
 
 Classify each finding **Important** or **Nit**, at most 5 nits. Important is
 only what would block the merge, with file, line, why it is wrong and how to
@@ -115,7 +117,8 @@ Human attention moves up a level: not every line, but whether the change does
 what the plan intended and whether the risk is acceptable.
 
 Git is reserved for the developer (see `CLAUDE.md`): prepare the PR, draft
-the description and the findings, but **you do not commit or push**.
+the description and the findings, but **you do not commit or push**. Run
+git in its own command, never chained: a chain with git is denied whole.
 Production requires `RELEASE_APPROVAL`; the `production-gate` hook checks it.
 
 ## Stage 6 — Maintain → `incident.md` → new `intent.md`
@@ -128,8 +131,6 @@ broke, which control failed, impact, root cause. Two mandatory outputs:
    `~/.claude/evals/`. Every production incident becomes an eval that is
    never removed. If it runs a test in a product repo, set `"repo"` to that
    repo's path: it then runs in that repo's Test stage, not on install.
-
----
 
 ## Session, context and cost
 
@@ -151,10 +152,9 @@ guides and "what a task costs" (claude.dev, 2026).
 - **Down the ladder.** A lookup that needs more than two searches, or a file
   you cannot place, logs and test output → `scout` (Haiku 5.5): ask for paths
   and lines, not contents; over 100K prompt tokens it costs 5×.
-  Haiku never edits. A task with a clear spec, listed files and a test →
-  `implementer` (Sonnet 5.5); verification and review → `verifier` /
-  `reviewer` (Sonnet 5.5); integration, decisions and unclear code stay in
-  the main session. Pin each agent's `model` in its definition; do not set
+  Haiku never edits. A clear spec, listed files and a test → `implementer`
+  (Sonnet 5.5); verification and review → `verifier` / `reviewer` (Sonnet
+  5.5); integration, decisions and unclear code stay in the main session. Pin each agent's `model` in its definition; do not set
   `CLAUDE_CODE_SUBAGENT_MODEL`, which moves every agent at once. Check the
   evidence of each subagent (open the file:line it cites) and consolidate.
 - **Measure, do not estimate**: `/usage` gives the real cost of the session.

@@ -9,10 +9,10 @@ Stop and ask if: a budget eval (65, 65b, 79) would need raising.
 
 | Task | Requirement | Files | Test | Status |
 |------|-------------|-------|------|--------|
-| T1 | R1, R2, R3 | `agents/implementer.md`, `agents/verifier.md`, `hooks/subagent-report-check.sh`, report cases and scripts | cases 120a–120f | done |
-| T2 | R4, R5 | `skills/sdlc/SKILL.md`, `agents/scout.md`, cases 77, 86b | cases 120g–120i | done |
-| T3 | R6 | `skills/repo-setup/SKILL.md`, `skills/repo-setup/templates/CLAUDE.md`, `migrations/3.1.0.md` | cases 120j–120k | done |
-| T4 | R7 | `hooks/evals-on-config-change.sh`, `evals/run.sh` | cases 120l–120m | done |
+| T1 | R1, R2, R3 | `agents/implementer.md`, `agents/verifier.md`, `hooks/subagent-report-check.sh`, report cases and scripts | cases 124a–124f | done |
+| T2 | R4, R5 | `skills/sdlc/SKILL.md`, `agents/scout.md`, cases 77, 86b | cases 124g–124i | done |
+| T3 | R6 | `skills/repo-setup/SKILL.md`, `skills/repo-setup/templates/CLAUDE.md`, `migrations/3.3.0.md` | cases 124j–124k | done |
+| T4 | R7 | `hooks/evals-on-config-change.sh`, `evals/run.sh` | cases 124l–124m | done |
 | T5 | release | `VERSION`, `CHANGELOG.md` | full suite | done |
 
 Git is reserved for the developer: the change is left in the working tree.

@@ -16,11 +16,11 @@
 - With fixture plans, `status-line.sh` prints the task, plan and context
   segments of R6–R9, and prints today's line with no open plan or a broken
   one (R10); timing under 150 ms with a 30-row plan.
-- A test install with an Elektro3-like fixture profile sets 64
+- A test install with an <Company>-like fixture profile sets 64
   `spinnerVerbs`; with no `spinner_verbs` key the user's phrases stay (R12).
 - README above `## Technical details`: ≤ 40 lines, no listed jargon (R4).
 - Left for the maintainer: rename the GitHub repo; commit the phrases file
-  in the documentation repo; a real `./install.sh` with the Elektro3
+  in the documentation repo; a real `./install.sh` with the <Company>
   profile (needs your go); one run of the README sentence in a clean `HOME`.
 
 ## Stop and ask if
@@ -50,8 +50,8 @@
 | T8 | Wire `plan-hint.sh` into `status-line.sh` after the mode; context hint at 70% with an open task, 90% always; robustness: symlink, 300 KB, garbage plan → today's line. Timing check. | `status-line.sh`, cases `114h-m` | New cases red then green; 90-92 and 113c-f unchanged and green | R9, R10 | implementer | T7, T3 | 4m/300k | done (W3; diff read; 76 ms with 32 rows) |
 | T9 | `install.sh`: optional `spinner_verbs` in `company.json`, path checks as `rules`, content checks in jq (array, 1–200, 1–80 chars, no control chars); stop before writing on error. | `install.sh`, `evals/fixtures/company-*`, cases `115a-h` | One case per invalid input of R11 + valid: red then green | R11 | implementer | — | 3m/250k | done (W1; diff read; red shown against HEAD install.sh after coding) |
 | T10 | `install.sh`: set `.spinnerVerbs = {mode: "replace", verbs}` after today's settings merge, one output line; untouched without the key. | `install.sh`, cases `115i-k` | Replaced + backup holds old; no key → untouched; no other key changes | R12 | implementer | T9 | 3m/200k | done (W2; diff read) |
-| T11 | Elektro3 content, outside this repo: write `IA/Perfil Elektro3/Frases de progreso.json` (64 starter kit phrases, "punto y coma") in `~/Repos/elektro3-documentacion`; add `"spinner_verbs"` to `~/Repos/claude-sdlc/profiles/elektro3/company.json`. Test install into a temp `HOME` with that profile. | 2 files outside the repo | `jq '.spinnerVerbs.verbs | length'` = 64 in the temp `HOME` | R13 | main | T10 | 3m/1.3M | done (cause: a shell write outside the repo was denied, redone with Write; temp HOME install: replace, 64 phrases, "punto y coma" present) |
-| T12 | 3.0.0: `VERSION`, `CHANGELOG.md` entry ("claude-sdlc is now Claudio", markers, Vibe lost once on upgrade, phrases, hints), no migration. Full suite, example profile suite, `check-public.sh`, clean installs from `claudio/` and `claude-sdlc/` folders. | `VERSION`, `CHANGELOG.md` | Commands of "Done means" | all | main | T2-T11 | 8m/2M | done (cause: install output still said "workflow"; 110d red then green; suite 276/0, example 277/0, elektro3 287/0, check-public 0, clean installs from claudio/ and claude-sdlc/ 239/0; two shell commands denied and rerun without rm) |
+| T11 | <Company> content, outside this repo: write `IA/Perfil <Company>/Frases de progreso.json` (64 starter kit phrases, "punto y coma") in `~/Repos/<company>-documentacion`; add `"spinner_verbs"` to `~/Repos/claude-sdlc/profiles/<company>/company.json`. Test install into a temp `HOME` with that profile. | 2 files outside the repo | `jq '.spinnerVerbs.verbs | length'` = 64 in the temp `HOME` | R13 | main | T10 | 3m/1.3M | done (cause: a shell write outside the repo was denied, redone with Write; temp HOME install: replace, 64 phrases, "punto y coma" present) |
+| T12 | 3.0.0: `VERSION`, `CHANGELOG.md` entry ("claude-sdlc is now Claudio", markers, Vibe lost once on upgrade, phrases, hints), no migration. Full suite, example profile suite, `check-public.sh`, clean installs from `claudio/` and `claude-sdlc/` folders. | `VERSION`, `CHANGELOG.md` | Commands of "Done means" | all | main | T2-T11 | 8m/2M | done (cause: install output still said "workflow"; 110d red then green; suite 276/0, example 277/0, <company> 287/0, check-public 0, clean installs from claudio/ and claude-sdlc/ 239/0; two shell commands denied and rerun without rm) |
 | T13 | Verify the change and two adjacent flows: Vibe on/off and the status line mode segment after the marker rename; `install.sh` re-run on an existing `settings.json` keeps the user's other keys. | — | Verifier report | all | verifier | T12 | 5m/1.7M | done: verifier amber; IMPORTANT install.md self-check fixed (--verbose); IMPORTANT new URL left to the maintainer's rename; nits noted |
 | T14 | Review pass: bugs | — | Findings per `REVIEW.md` | all | reviewer | T13 | 3m/550k | done (1 important fixed: 08m read as octal, 114n; nits fixed: short rows, no trailing pipe, huge Est, 114o-p) |
 | T15 | Review pass: security (company file paths and content, status line reading repo files, untrusted plan text) | — | Findings per `REVIEW.md` | R10, R11 | reviewer | T13 | 3m/550k | done (3 important fixed: multi-value phrases file, C1/bidi controls, quadratic long line; cases 114q, 115l-o) |
@@ -100,7 +100,7 @@ parser, robustness cases), T5 (writing), T12 (four verification commands).
 
 T4 waits for T9 and T10 because all three touch `install.sh`. T8 waits for
 T3 because 113f's fixture and the status line's marker read change there.
-T11 needs the installer of T10 to test the Elektro3 file. T5 waits for T1
+T11 needs the installer of T10 to test the <Company> file. T5 waits for T1
 because the README must not promise hints in clients that do not show them.
 
 ## Test strategy

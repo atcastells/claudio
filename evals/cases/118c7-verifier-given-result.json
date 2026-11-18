@@ -1,0 +1,1 @@
+{"name":"verifier counts a suite result given with its command and output","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"given in the prompt with its command and output"}

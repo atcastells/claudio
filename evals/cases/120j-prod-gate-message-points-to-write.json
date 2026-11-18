@@ -1,0 +1,1 @@
+{"name": "production-gate message points file writes to Write/Edit", "kind": "hook", "hook": "production-gate.sh", "capture": "all", "payload": {"tool_input": {"command": "cat > src/lib.rs <<'EOF'\nuse crate::production::config;\nfn apply() {}\nEOF"}}, "expect_exit": 2, "contains": "To write a file, use Write or Edit"}

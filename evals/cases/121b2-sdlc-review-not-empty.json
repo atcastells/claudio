@@ -1,0 +1,1 @@
+{"name":"sdlc: a plan is not closed with Review empty","kind":"file_contains","file":"{root}/skills/sdlc/SKILL.md","contains":"not closed while its *Review* section is empty"}

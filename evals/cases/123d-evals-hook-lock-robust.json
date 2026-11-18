@@ -1,0 +1,1 @@
+{"name":"evals-on-config-change: a lock is live only for a real hook process, release does not lose a run, signals stop the suite, crashes and unusable lock dirs still report","kind":"hook","script":"evals/scripts/evals-hook-run-test.sh","args":["{root}/hooks/evals-on-config-change.sh","robust"],"expect_exit":0,"contains":"all passed"}

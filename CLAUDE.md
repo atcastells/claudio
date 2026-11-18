@@ -8,7 +8,7 @@ this file only describes the repo.
 ## Commands
 
 ```bash
-bash evals/run.sh                                   # core suite; ~30 s; "PASS: N FAIL: 0 (repo: ...)"
+bash evals/run.sh                                   # core suite; ~2 min; "PASS: N FAIL: 0 (repo: ...)"
 WORKFLOW_PROFILE=profiles/<name> bash evals/run.sh  # core + that profile's cases
 bash scripts/check-public.sh                        # before publishing: exit 0, 0 denylisted terms
 HOME=$(mktemp -d) ./install.sh --no-profile --verbose # clean test install; ends with the suite green

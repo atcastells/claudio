@@ -1,0 +1,1 @@
+{"name":"verifier runs the suite last, and not when main gave its result","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"unless the prompt already gives its result"}

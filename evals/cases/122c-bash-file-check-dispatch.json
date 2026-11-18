@@ -1,0 +1,1 @@
+{"name":"bash-file-check: plan rows reach task-actuals after a Bash change and the evals hook never runs","kind":"hook","script":"evals/scripts/bash-file-check-test.sh","args":["{root}/hooks/bash-file-check.sh","dispatch"],"expect_exit":0,"contains":"all passed"}

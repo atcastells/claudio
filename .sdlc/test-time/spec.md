@@ -40,5 +40,5 @@ skills), `skills/sdlc/SKILL.md` within 160 lines.
 
 ## Release
 
-MINOR (3.1.0): new rules and a project template change (`repo-setup`), so it
-ships `migrations/3.1.0.md`.
+MINOR (3.3.0): new rules and a project template change (`repo-setup`), so it
+ships `migrations/3.3.0.md`.

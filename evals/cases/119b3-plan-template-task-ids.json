@@ -1,0 +1,1 @@
+{"name":"plan template says task IDs are T<n>","kind":"file_contains","file":"{root}/skills/sdlc/templates/plan.md","contains":"Task IDs are `T<n>`"}

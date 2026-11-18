@@ -1,0 +1,1 @@
+{"name":"bash-file-check: never runs repo git config code, checks ++ lines and glob names, stays cheap on a dirty tree, stays inside the top level","kind":"hook","script":"evals/scripts/bash-file-check-test.sh","args":["{root}/hooks/bash-file-check.sh","gitsafe"],"expect_exit":0,"contains":"all passed"}

@@ -28,11 +28,16 @@ ok "no filter" "$(counts "$(run)")" "3/0"
 ok "only a c" "$(counts "$(run EVALS_ONLY='a c')")" "2/0"
 ok "only unknown" "$(counts "$(run EVALS_ONLY='zzz')")" "0/0"
 
-hookrun() { jq -n --arg p "$1" '{tool_input:{file_path:$p}}' | env -u CLAUDE_EVALS_RUNNING -u EVALS_ONLY WORKFLOW_HOME="$tmp/home" bash "$hook" 2>&1; }
-out=$(hookrun "$src/hooks/foo.sh")
-printf '%s\n' "$out" | grep -q '2 cases that name foo.sh' || { echo "FAIL: foo.sh edit: $out"; fail=1; }
-out=$(hookrun "$src/VERSION")
-printf '%s\n' "$out" | grep -q 'all cases' || { echo "FAIL: VERSION edit: $out"; fail=1; }
+# The hook is silent on green, so selection shows through a case that fails
+# only when it is selected: c names bar.sh and now fails.
+jq -n --arg f "{root}/hooks/bar.sh" '{name:"bar file",kind:"file_contains",file:$f,contains:"nope"}' > "$src/evals/cases/c.json"
+hookrun() { jq -n --arg p "$1" '{tool_input:{file_path:$p}}' | env -u CLAUDE_EVALS_RUNNING -u EVALS_ONLY -u WORKFLOW_PROFILE WORKFLOW_HOME="$tmp/home" bash "$hook" 2>&1; }
+out=$(hookrun "$src/hooks/foo.sh"); rc=$?
+ok "foo.sh edit runs a b only" "$rc" "0"
+out=$(hookrun "$src/hooks/bar.sh"); rc=$?
+ok "bar.sh edit runs c only" "$rc/$(printf '%s\n' "$out" | grep -c '^PASS: 0   FAIL: 1')" "2/1"
+out=$(hookrun "$src/VERSION"); rc=$?
+ok "VERSION edit runs all" "$rc/$(printf '%s\n' "$out" | grep -c '^PASS: 2   FAIL: 1')" "2/1"
 
 [ "$fail" -eq 0 ] && echo "all passed"
 exit "$fail"

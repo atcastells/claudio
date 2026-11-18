@@ -1,0 +1,1 @@
+{"name":"report-check: implementer needs a Red/Mutation line with literal output; TASK id hint","kind":"hook","script":"evals/scripts/report-red-test.sh","args":["{root}/hooks/subagent-report-check.sh"],"expect_exit":0,"contains":"all passed"}

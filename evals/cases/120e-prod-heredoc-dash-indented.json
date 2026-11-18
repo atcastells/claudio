@@ -1,0 +1,1 @@
+{"name": "production-gate still scans a <<- heredoc body", "kind": "hook", "hook": "production-gate.sh", "payload": {"tool_input": {"command": "cat > notes.txt <<-EOF\n\tdeploy to production and apply\n\tEOF\nls"}}, "expect_exit": 2}

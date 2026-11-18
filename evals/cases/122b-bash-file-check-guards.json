@@ -1,0 +1,1 @@
+{"name":"bash-file-check: credential-guard and test-guard run after the fact on files changed through Bash","kind":"hook","script":"evals/scripts/bash-file-check-test.sh","args":["{root}/hooks/bash-file-check.sh","guards"],"expect_exit":0,"contains":"all passed"}

@@ -1,0 +1,3 @@
+{"task":"T1","runs_on":"implementer","model":"claude-sonnet-5-5","est_min":3,"est_ktok":200,"min":3,"ktok":111,"dev_min_pct":0,"dev_tok_pct":-45,"flag":false,"cause":"","date":"2026-11-16","agent_id":"a77b66c797a10f3a2"}
+{"task":"T2","event":"start","ts":"2026-11-16T08:56:02Z"}
+{"task":"T2","runs_on":"main","model":"claude-opus-5-5","est_min":3,"est_ktok":1200,"min":1.9,"ktok":619,"dev_min_pct":-37,"dev_tok_pct":-48,"flag":false,"cause":"none; 119b1–b3 red then green, suite 302/0","date":"2026-11-16"}

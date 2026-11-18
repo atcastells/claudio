@@ -5,7 +5,7 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
-## 3.1.0 — 2026-11-18
+## 3.3.0 — 2026-11-18
 
 Less session time on tests and a clear model hierarchy, from a profile of
 439 local sessions (21% of agent time on tests, 51% of test runs repeated
@@ -16,10 +16,10 @@ with no edit, 55% full-suite runs). Slug `.sdlc/test-time/`.
   the wave. Test output goes to a file and is read from there; no test runs
   again with nothing changed. Failure budget: the same failure twice stops
   the task as `blocked`, never more than four runs of the same test. New
-  report lines `Attempts: <n>` (required by `subagent-report-check`),
-  `Suite: not run` and `Log:`.
-- **Verifier**: reads the wave's test output instead of running that suite
-  again.
+  report lines `Attempts: <n>` (required by `subagent-report-check`, next
+  to `Red:`), `Suite: not run` and `Log:`.
+- **Verifier**: in its last step, reads the wave's test output instead of
+  running that suite again.
 - **Model ladder**: ends in `/advisor` with Fable 5.2 (it advises, Opus keeps
   executing) instead of Fable 5.1 as the main model; `high` after two failed
   attempts. Lookups needing more than two searches go to the `scout`, which
@@ -27,10 +27,102 @@ with no edit, 55% full-suite runs). Slug `.sdlc/test-time/`.
 - **`/repo-setup`**: `CLAUDE.md` gets a one-test command and the "test output
   in a file" convention; Rust repos get `cargo check --tests`,
   `cargo nextest run` filtered while iterating and the workspace at the end.
-  Migration `3.1.0`.
+  Migration `3.3.0`.
 - **`evals-on-config-change`**: runs only the cases that name the edited file
   (`EVALS_ONLY` in `run.sh`); shared code or no match still runs the whole
-  suite. Timeout 15 s → 120 s, so the whole suite is no longer cut off.
+  suite, and so does a coalesced rerun, which may come from another file.
+
+## 3.2.0 — 2026-11-16
+
+File edits made through Bash are now checked. In auto mode (the default
+Claudio installs) Claude Code tells the model to make small file changes
+with `sed`, heredocs or short scripts instead of Read, Edit and Write, and
+`credential-guard`, `test-guard`, `task-actuals` and
+`evals-on-config-change` only saw Write and Edit. No project migration.
+
+- **New hook `bash-file-check.sh`** on `PreToolUse`, `PostToolUse` and
+  `PostToolUseFailure` (matcher `Bash`). Before the command it records a
+  marker; after it (also when the command fails), it lists the files in
+  the git work tree whose status changed since the marker (ctime, so `mv`,
+  `cp -p` and `tar` count) and runs `credential-guard` and `test-guard` on
+  them as if they had been written with Write or Edit, and `task-actuals`
+  on changed `plan.md` files. A tracked file is compared with its HEAD
+  version, so everything uncommitted in a touched file is checked, and an
+  old uncommitted hit can be reported again. A hit reaches the model with
+  exit 2: "changed through Bash and checked after the fact… fix it with
+  Edit now".
+- **Git runs no repo code.** The hook uses only `git rev-parse`,
+  `ls-files` and `cat-file`, with `core.fsmonitor` off, lazy fetch off
+  (`GIT_NO_LAZY_FETCH`) and the `GIT_*` location variables unset: no
+  `git status` or `git diff`, which would run a repo's fsmonitor, clean
+  filters, textconv or `diff.external`, and no partial-clone fetch, which
+  would run its `uploadpack`. Files are compared as text even with NUL
+  bytes. A top
+  level that does not contain `cwd` (a `.git` file or `core.worktree`
+  pointing elsewhere) is not checked.
+- **What it cannot do.** It does not stop the write (no hook event can,
+  short of parsing shell). It does not run the evals hook: config files
+  changed through Bash get no eval run (the evals hook below covers Write
+  and Edit). It checks only the git work
+  tree of `cwd`: not ignored files (the command can edit `.gitignore` or
+  `.git/info/exclude` itself), not nested repositories, not other
+  repositories reached with `cd` or `git -C`. It checks at most 50 files
+  per command and none over 1 MB, and says so to the model when it skips.
+  A command that also commits its own write, or that deletes or ages the
+  marker in `$TMPDIR`, or a background command that writes after it
+  returns, is not caught: this is a check against habit, not against
+  deliberate evasion. Cost measured: about 50–75 ms per Bash command with
+  no change and 170–190 ms with one changed file (repos of 525 and 2003
+  tracked files); under 1.5 s with 3000 untracked files.
+- **Agents and the `sdlc` skill**: edit repo files with Edit or Write;
+  shell only for temp files.
+- **The config-change evals hook now finishes.** The suite takes 1–2
+  minutes and the hook had a 15 s timeout, so Claude Code cancelled it and
+  a red suite never reached the model. It now runs with `asyncRewake` and a
+  600 s timeout: the edit does not wait, a red suite wakes Claude with at
+  most 40 `FAIL` lines and the summary, and a green one says nothing. A
+  burst of edits shares one run (at most one running and one pending per
+  suite, locked in `~/.claude/workflow/locks`, mode 700, never through a
+  symlink; a lock left by a dead process is taken over). In `claude -p`
+  sessions a run still going at exit is cancelled.
+
+## 3.1.0 — 2026-11-16
+
+Delegated work that survives long, multi-layer tasks, from a three-day run
+with 154 subagents. No project migration: everything changes in `~/.claude`.
+
+- **Turn limits.** `implementer` and `verifier` go from 40 to 60
+  `maxTurns`. All four agents keep a running report, so output cut short at
+  the limit (Claude Code returns it marked as partial) still says what is
+  done and what is left; the `sdlc` skill says to resume it with
+  SendMessage, not relaunch it. No turn-warning hook: the hooks reference
+  documents the subagent transcript only for `SubagentStop` and gives no
+  turn count.
+- **Red evidence.** An implementer report with `RESULT: done` needs a
+  `Red: <command> → <failing line>` or `Mutation: <what was broken> →
+  <failing line>` line; one that is missing, empty or opens with an
+  admission ("not seen", "none", "n/a", "no …", "passed", "green") is sent
+  back. A bad `TASK:` id is answered with "task IDs are `T<n>`". The
+  verifier counts a suite result given in its prompt with command and
+  output.
+- **`production-gate` and file writes.** Heredoc bodies are still scanned:
+  filtering them without a shell parser let real commands through
+  (hyphenated tags, expanded bodies, `>(bash)`). The block message now says
+  to write files with Write or Edit, whose content is never scanned.
+- **Task ids.** `T<n>` plus an optional letter, then a space or the end of
+  the cell: the report hook rejects `T3-red`, and the status-line hint now
+  shows a task in progress such as `T3b`.
+- **Delegated-work rules** in `implementer` and `verifier`: git in its own
+  command, background processes stopped in the same command, repo files
+  copied and never moved out, temp files under `mktemp -d`.
+- **Verifier order.** Change behavior and adjacent flows first, the suite
+  last and only when the main session did not pass its result.
+- **`scout`** says what it takes: one lookup per launch, not audits.
+- **Plan template.** At most 3 rows per delegated task, `seam:` tasks for
+  layers that do not build apart, "may I open windows?" in *Stop and ask
+  if*, a *Review* section (three verdicts or a signed waiver), and task IDs
+  stated as `T<n>`. The `sdlc` skill: orchestration on `main` rows, and no
+  figure reaches the user without a run that could have failed.
 
 ## 3.0.0 — 2026-11-04
 

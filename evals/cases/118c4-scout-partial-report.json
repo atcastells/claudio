@@ -1,0 +1,1 @@
+{"name":"scout leaves a running report for a partial stop","kind":"file_contains","file":"{root}/agents/scout.md","contains":"cut short at the turn limit"}

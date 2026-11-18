@@ -99,6 +99,11 @@
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/production-gate.sh\"",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/bash-file-check.sh\"",
+            "timeout": 5
           }
         ]
       },
@@ -120,7 +125,8 @@
           {
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/evals-on-config-change.sh\"",
-            "timeout": 120
+            "asyncRewake": true,
+            "timeout": 600
           }
         ]
       },
@@ -131,6 +137,28 @@
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/task-actuals.sh\"",
             "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/bash-file-check.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/bash-file-check.sh\"",
+            "timeout": 30
           }
         ]
       }

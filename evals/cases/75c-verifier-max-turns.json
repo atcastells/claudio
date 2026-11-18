@@ -1,1 +1,1 @@
-{"name":"verifier caps its turns","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"maxTurns:"}
+{"name":"verifier maxTurns is 60","kind":"file_contains","file":"{root}/agents/verifier.md","contains":"maxTurns: 60"}

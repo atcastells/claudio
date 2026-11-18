@@ -1,0 +1,1 @@
+{"name":"scout description names the size of question it takes","kind":"file_contains","file":"{root}/agents/scout.md","contains":"One lookup question per launch; not audits or reviews"}
