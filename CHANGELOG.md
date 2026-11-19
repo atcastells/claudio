@@ -5,6 +5,26 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.8.1 — 2026-11-19
+
+Fixes from the ASTRA VIS-EST-002 session on 3.7.0. Slug `.sdlc/claudio-3-8-1/`.
+`./install.sh` is enough.
+
+- **One integrator per task**: the guard blocks a main-session `SendMessage`
+  whose tag names another plan row than the one that agent ran (read from
+  its actuals row). The T0 integrator had been continued for the plan and
+  for T12: one row with 45 min and 7.1M tokens, T12 never closed. A
+  `needs-decision` is still answered on the same agent.
+- **Active time in actuals**: a wait of over 5 min before a new prompt
+  (an agent continued after the developer replied) is not counted; long
+  tool runs still are.
+- **Symbols through tags or LSP**: `bash-habits` reminds an agent once when
+  it greps an identifier in a repo with a `./tags` index (config, docs and
+  piped greps are left alone). `repo-setup` `check.sh` warns when
+  `CLAUDE.md` names LSP for a Rust repo and no rust-analyzer LSP plugin and
+  binary are there, and when it names a missing `tags` file. In the session,
+  26 agents made 0 LSP calls and 0 tags lookups against ~150 greps.
+
 ## 3.8.0 — 2026-11-19
 
 Module CLAUDE.md files, asked by the developer. Slug `.sdlc/claudio-3-8-0/`.

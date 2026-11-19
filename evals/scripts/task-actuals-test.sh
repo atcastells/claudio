@@ -334,5 +334,10 @@ jq -n --arg cwd "$ws2" --arg t "$ws/transcript.jsonl" --arg f "$pf" \
   | TASK_ACTUALS_NOW="$T0" bash "$hook" >/dev/null 2>&1
 [ -e "$lg" ] || [ -e "$M" ] && fail y "wrote actuals for a plan outside cwd"
 
+# z. idle wait for a continued prompt is not counted; a long tool run is
+run z idle.jsonl 1
+f="$ws/.sdlc/demo/actuals.jsonl"
+jq -e '.min==12' "$f" >/dev/null 2>&1 || fail z "expected 12 active minutes (42 minus the 30-minute wait): $(cat "$f" 2>/dev/null)"
+
 [ "$fails" -eq 0 ] && echo "task-actuals scenarios: all passed" || echo "task-actuals scenarios: $fails failed"
 [ "$fails" -eq 0 ]

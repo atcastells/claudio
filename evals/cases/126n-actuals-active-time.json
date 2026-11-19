@@ -1,0 +1,1 @@
+{"name": "task-actuals: idle wait before a continued prompt is not counted", "kind": "file_contains", "file": "{root}/hooks/task-actuals.sh", "contains": "Active minutes: the span minus the waits for a new prompt", "origin": "ASTRA VIS-EST-002, T0 recorded 45.5 min with 28 min idle (claudio-3-8-1); behavior in 102a scenario z"}

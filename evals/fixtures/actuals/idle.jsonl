@@ -1,0 +1,6 @@
+{"type":"user","timestamp":"2026-10-14T10:00:00.000Z","message":{"role":"user","content":"[sdlc:demo/T4 est=5m/400k]\nDo the synthetic task."}}
+{"type":"assistant","timestamp":"2026-10-14T10:01:00.000Z","message":{"id":"msg_a","model":"model-x","usage":{"input_tokens":1000}}}
+{"type":"user","timestamp":"2026-10-14T10:09:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","content":"8-minute test run"}]}}
+{"type":"assistant","timestamp":"2026-10-14T10:10:00.000Z","message":{"id":"msg_b","model":"model-x","usage":{"input_tokens":1000}}}
+{"type":"user","timestamp":"2026-10-14T10:40:00.000Z","message":{"role":"user","content":"The coordinator sent a message while you were working: go on"}}
+{"type":"assistant","timestamp":"2026-10-14T10:42:00.000Z","message":{"id":"msg_c","model":"model-x","usage":{"input_tokens":1000}}}

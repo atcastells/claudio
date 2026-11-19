@@ -161,7 +161,16 @@ subagent_stop() {
              + (.cache_read_input_tokens // 0) * $p[2]) / 1000000 end]) as $usds
     | (if ($usds | length) > 0 and ($usds | all(. != null))
        then ($usds | add * 100 | round / 100) else null end) as $usd
-    | ((($t | last | ts) - ($t | first | ts)) / 60 | r1) as $min
+    # Active minutes: the span minus the waits for a new prompt (a user
+    # message that is not a tool result, over 5 min after the previous line),
+    # e.g. an integrator continued with SendMessage after the developer replied
+    | ([$l[] | select(.timestamp? | type == "string")
+        | {s: (.timestamp | ts),
+           p: (.type == "user" and ((.message.content? | type) == "string"))}]) as $e
+    | ([range(1; $e | length) as $i
+        | ($e[$i].s - $e[$i - 1].s) as $g
+        | select($e[$i].p and $g > 300) | $g] | add // 0) as $idle
+    | (((($t | last | ts) - ($t | first | ts)) - $idle) / 60 | r1) as $min
     | (($tok / 1000) | round) as $ktok
     | dev($min; $em) as $dm | dev($ktok; $ek) as $dt
     | ($report | capture("Deviation cause:[ \t]*(?<c>[^\n]*)").c // ""

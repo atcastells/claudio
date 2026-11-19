@@ -8,6 +8,9 @@
 #      a file and read more from there instead of running it again.
 #   2. A python/perl/ruby script that rewrites a file, with no temp path in
 #      the command: edit repo files with Edit or Write.
+#   3. grep/rg of an identifier (fn/func/def/class/struct... Name, or a bare
+#      CamelCase / snake_case word) over the tree when the repo has a ./tags
+#      index: look it up there (or with LSP) first. Once per agent or session.
 # Any other event or tool, or a parse error: silent, exit 0.
 
 payload=$(cat)
@@ -36,6 +39,26 @@ if printf '%s' "$cmd" | grep -qE '(python3?|perl|ruby)([[:space:]]+-[A-Za-z]+)*[
     fi
   fi
 fi
+
+# 3. Symbol grep with a tags index at the repo root
+first=$(printf '%s' "$cmd" | sed -E 's/^(cd [^;&]*(;|&&)[[:space:]]*)//')
+case "$first" in
+  grep\ *|rg\ *|egrep\ *)
+    if printf '%s' "$first" | grep -qE "(fn|func|def|class|struct|enum|trait|impl|signal|const)[[:space:]]+[A-Za-z_][A-Za-z0-9_]*|[\"' ](\\b)?([A-Z][a-z0-9]+[A-Z][A-Za-z0-9]*|[a-z][a-z0-9]*_[a-z0-9_]+)(\\b)?[\"' ]" \
+       && ! printf '%s' "$first" | grep -qE "[[:space:]]tags([[:space:]]|$)" \
+       && ! printf '%s' "$first" | grep -qE "\.(toml|md|ron|json|ya?ml|txt|log|csv)([[:space:]\"']|$)|--type[= ](toml|md|json|yaml)|-g ['\"]?\*\.(toml|md|ron|json)"; then
+      cwd=$(printf '%s' "$payload" | jq -r '.cwd // ""' 2>/dev/null)
+      dir=$(printf '%s' "$cmd" | sed -nE 's/^cd[[:space:]]+([^;&[:space:]]+).*/\1/p')
+      [ -n "$dir" ] && [ -d "$dir" ] || dir="$cwd"
+      root=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)
+      who=$(printf '%s' "$payload" | jq -r '(.agent_id // .session_id // "") | tostring' 2>/dev/null)
+      mark="${TMPDIR:-/tmp}/claudio-tags-hint-$who"
+      if [ -n "$root" ] && [ -s "$root/tags" ] && printf '%s' "$who" | grep -qE '^[A-Za-z0-9_-]+$' && [ ! -e "$mark" ]; then
+        : > "$mark" 2>/dev/null
+        notes+=("This repo has a tags index ($root/tags). Look a symbol up there first (\`rg '^Name\\t' tags\`, or the LSP tool for definition and references); grep stays for free text, config and docs.")
+      fi
+    fi ;;
+esac
 
 [ ${#notes[@]} -gt 0 ] || exit 0
 msg="bash-habits: ${notes[*]}"

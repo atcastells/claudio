@@ -3,7 +3,7 @@
 # Orchestrate mode, and nothing else.
 #   usage: orchestrator-guard-test.sh <hooks-dir> <case>
 #   cases: main-edit sub-edit sdlc-write git-read no-marker cross-chain git-write shared-edit
-#          git-read-more git-chain draft-plan read-limit read-image agent-type quoted-meta
+#          git-read-more git-chain draft-plan read-limit read-image agent-type quoted-meta send-message
 set -uo pipefail
 hooks="$1"; c="$2"
 tmp=$(mktemp -d)
@@ -185,6 +185,16 @@ case "$c" in
     run 2 "unterminated quote" "$(p Bash "$(jq -nc --arg c 'git log "a | sh' '{command:$c}')")"
     run 2 "real pipe into sh" "$(p Bash '{"command":"git log | grep \"x\" | sh"}')"
     run 2 "quoted then redirect" "$(p Bash "$(jq -nc --arg c 'git log "(x)" > out.txt' '{command:$c}')")"
+    ;;
+  send-message)
+    printf '%s\n' '{"task":"T0","runs_on":"integrator","agent_id":"agT0","min":5}' '{"task":"T9","runs_on":"integrator","agent_id":"agT9","min":2}' > "$repo/.sdlc/demo/actuals.jsonl"
+    sm() { p SendMessage "$(jq -nc --arg to "$1" --arg m "$2" '{to:$to, message:$m}')"; }
+    run 2 "T12 sent to the T0 integrator" "$(sm agT0 '[sdlc:demo/T12 est=5m/700k] build the table')"
+    run 2 "T10 sent to the T9 integrator" "$(sm agT9 '[sdlc:demo/T10 est=5m/700k] go on')"
+    run 0 "decision for the same T0" "$(sm agT0 '[sdlc:demo/T0 est=12m/1800k] decision: option B')"
+    run 0 "untagged answer" "$(sm agT0 'option B, go on')"
+    run 0 "unknown agent" "$(sm agX '[sdlc:demo/T12 est=5m/700k] x')"
+    run 0 "agent sends a message" "$(p SendMessage '{"to":"agT0","message":"[sdlc:demo/T12 est=1m/100k] x"}' agent-1)"
     ;;
   no-marker)
     rm -f "$tmp/claudio-orch-s1"

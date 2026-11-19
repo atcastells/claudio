@@ -1,0 +1,1 @@
+{"name": "bash-habits: once per agent, use the tags index or LSP before grepping a symbol", "kind": "hook", "script": "evals/scripts/bash-habits-tags-test.sh", "args": ["{root}/hooks/bash-habits.sh"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA VIS-EST-002: 0 LSP calls, 0 tags lookups, ~150 grep/rg in 26 agents (claudio-3-8-1)"}

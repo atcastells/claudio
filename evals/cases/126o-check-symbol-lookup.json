@@ -1,0 +1,1 @@
+{"name": "repo-setup check: LSP server for Rust and tags index when CLAUDE.md names them", "kind": "hook", "script": "evals/scripts/check-symbols-test.sh", "args": ["{root}/skills/repo-setup/check.sh"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA VIS-EST-002, LSP rule never used (claudio-3-8-1)"}

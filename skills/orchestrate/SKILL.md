@@ -46,7 +46,7 @@ every citation of a `blocked` or `needs-decision` one. `needs-decision` is
 the integrator handing you a question it must not settle (`integrator.md`,
 *Escalate*): decide it yourself, or ask the developer when it changes the
 goal; never send it back unanswered: continue that integrator with
-`SendMessage` and your decision, so the hook closes the row.
+`SendMessage` and your decision. Another task gets a new integrator.
 
 ## Persist or discard
 

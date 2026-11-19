@@ -85,6 +85,23 @@ while IFS= read -r f; do
 done < <(find . \( -name .git -o -name node_modules -o -name target -o -name vendor -o -name .sdlc -o -name dist -o -name build -o -name .venv \) -prune -o -name CLAUDE.md -type f -print 2>/dev/null | sort)
 ok "module CLAUDE.md files: $mods"
 
+# --- Symbol lookup: LSP server and tags index ------------------------------------
+# Agents look symbols up with LSP or a tags index before grep, when CLAUDE.md
+# names them. An LSP tool with no language server, or a missing tags file,
+# leaves them on grep without saying so.
+user_settings="${CLAUDE_USER_SETTINGS:-$HOME/.claude/settings.json}"
+if [ -f CLAUDE.md ] && grep -qE '\bLSP\b' CLAUDE.md && [ -f Cargo.toml ]; then
+  if jq -e '.enabledPlugins // {} | to_entries[] | select(.value == true and (.key | test("rust-analyzer|rust-lsp|rust_analyzer")))' "$user_settings" >/dev/null 2>&1 \
+     && command -v rust-analyzer >/dev/null 2>&1; then
+    ok "LSP for Rust: plugin enabled and rust-analyzer on PATH"
+  else
+    wn "CLAUDE.md names LSP but Rust has no LSP server for agents: enable a rust-analyzer LSP plugin with /plugin and put rust-analyzer on PATH, or point CLAUDE.md to the tags index only"
+  fi
+fi
+if [ -f CLAUDE.md ] && grep -qE '(`|\b)tags(`|\b).*(index|ndice|ctags|tags\.sh)|ctags' CLAUDE.md; then
+  [ -s tags ] && ok "tags index present" || wn "CLAUDE.md names a tags index but ./tags is missing or empty: regenerate it"
+fi
+
 # --- Test command defined ------------------------------------------------------
 if [ -f package.json ] && jq -e '.scripts.test' package.json >/dev/null 2>&1; then ok "test command: npm test"
 elif [ -f Makefile ] && grep -qE '^test:' Makefile; then ok "test command: make test"

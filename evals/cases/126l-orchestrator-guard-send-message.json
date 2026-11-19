@@ -1,0 +1,1 @@
+{"name": "orchestrator-guard: SendMessage continues an agent only on its own task", "kind": "hook", "script": "evals/scripts/orchestrator-guard-test.sh", "args": ["{root}/hooks", "send-message"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA VIS-EST-002, the T0 integrator continued for the plan and T12: 45 min and 7.1M tokens on T0 (claudio-3-8-1)"}

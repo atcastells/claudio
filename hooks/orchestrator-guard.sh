@@ -1,6 +1,6 @@
 #!/bin/bash
 # orchestrator-guard: in Orchestrate mode the main session plans and decides; the
-# integrator agent does the work. PreToolUse on Write|Edit|MultiEdit|NotebookEdit|Bash|Agent|Task|Read.
+# integrator agent does the work. PreToolUse on Write|Edit|MultiEdit|NotebookEdit|Bash|Agent|Task|Read|SendMessage.
 # Acts only when the session's orch marker exists.
 # Main session (no agent_id), exit 2 = block. Allowed there:
 #   - writes under a chain: .sdlc/<slug>/ of the repo that holds cwd (found by
@@ -14,6 +14,7 @@
 #   - git add, commit and push, alone, always answered with permissionDecision "ask";
 #   - calibrate.sh and the orchestrate clean.sh, alone;
 #   no substitution, redirection, subshell or background.
+#   - SendMessage: only to continue an agent on its own task (its actuals row);
 #   - Agent: only integrator and scout; a plan row (T1 and up, no letter) is not delegated while the
 #     chain's plan.md is still a draft; T0, pre-plan inspection, passes.
 #   - Read: an integrator artifact (.sdlc/<slug>/work/*.md but its *-brief.md),
@@ -176,6 +177,24 @@ fi
 
 # --- Main session --------------------------------------------------------
 case "$tool" in
+  SendMessage)
+    # Continue an agent only for its own task: another plan row gets a new
+    # integrator (clean context, its own actuals and plan row). The agent's
+    # task comes from its actuals row (agent_id), written when it stopped.
+    to=$(printf '%s' "$payload" | jq -r '.tool_input.to // ""' 2>/dev/null)
+    tag=$(printf '%s' "$payload" | jq -r '.tool_input.message // ""' 2>/dev/null \
+      | sed -nE '1,3s/.*\[sdlc:([a-z0-9-]+)\/(T[0-9]+)[a-z]? est=[^]]*\].*/\1 \2/p' | head -n 1)
+    [ -n "$tag" ] && [ -n "$to" ] || exit 0
+    slug="${tag% *}"; task="${tag#* }"
+    chain=$(chain_dir "$cwd" "$slug" "$sid") || exit 0
+    [ -f "$chain/actuals.jsonl" ] || exit 0
+    had=$(jq -R -r --arg id "$to" 'fromjson? | select(type == "object" and .agent_id == $id) | .task' \
+      "$chain/actuals.jsonl" 2>/dev/null | tail -n 1 | sed -E 's/[a-z]$//')
+    [ -n "$had" ] || exit 0
+    [ "$had" = "$task" ] && exit 0
+    printf '%s\n' "BLOCKED by orchestrator-guard: that integrator ran $had; $task is another plan row. Launch a new integrator with the [sdlc:$slug/$task ...] tag and its brief: a fresh context costs less than re-reading this one, and $task gets its own actuals and plan row. SendMessage is for answering the same task (a needs-decision)." >&2
+    exit 2
+    ;;
   Read)
     f=$(printf '%s' "$payload" | jq -r '.tool_input.file_path // ""' 2>/dev/null)
     lim=$(printf '%s' "$payload" | jq -r '.tool_input.limit // "" | tostring' 2>/dev/null)
