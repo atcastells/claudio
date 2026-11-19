@@ -1,0 +1,1 @@
+{"name": "brief states only exceptions to the repo's Agent defaults", "kind": "file_contains", "file": "{root}/skills/sdlc/templates/brief.md", "contains": "exceptions to the repo's `## Agent defaults`", "origin": "ASTRA session profile 13-19 Nov 2026 (claudio-3-7-0)"}

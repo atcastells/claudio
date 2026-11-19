@@ -1,0 +1,1 @@
+{"name": "scout looks up symbols with LSP or the tags index", "kind": "file_contains", "file": "{root}/agents/scout.md", "contains": "A symbol (definition, references, callers): LSP", "origin": "ASTRA session profile 13-19 Nov 2026 (claudio-3-7-0)"}

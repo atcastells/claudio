@@ -9,7 +9,7 @@ kind: brief
 ## Decisions
 - <one line each: the choice and, if not obvious, its reason>
 ## Files and limits
-<paths (absolute when the chain is in another repo); what not to touch>
+<paths (absolute when the chain is in another repo); only exceptions to the repo's `## Agent defaults` (no git writes, no windows... go there, not here)>
 ## Done means
 <the test or check, when the plan row's is not enough>
 ## Spec draft

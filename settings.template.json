@@ -168,6 +168,11 @@
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/bash-file-check.sh\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/bash-habits.sh\"",
+            "timeout": 5
           }
         ]
       }

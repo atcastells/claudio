@@ -1,0 +1,1 @@
+{"name": "bash-habits: test output to a file, script edits of repo files", "kind": "hook", "script": "evals/scripts/bash-habits-test.sh", "args": ["{root}/hooks/bash-habits.sh"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA session profile 13-19 Nov 2026 (claudio-3-7-0)"}

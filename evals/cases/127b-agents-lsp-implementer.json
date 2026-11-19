@@ -1,0 +1,1 @@
+{"name": "implementer can use LSP", "kind": "file_contains", "file": "{root}/agents/implementer.md", "contains": "tools: Read, Glob, Grep, Bash, Edit, Write, LSP", "origin": "ASTRA session profile 13-19 Nov 2026 (claudio-3-7-0)"}

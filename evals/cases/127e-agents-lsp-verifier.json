@@ -1,0 +1,1 @@
+{"name": "verifier can use LSP", "kind": "file_contains", "file": "{root}/agents/verifier.md", "contains": "tools: Read, Glob, Grep, Bash, LSP", "origin": "ASTRA session profile 13-19 Nov 2026 (claudio-3-7-0)"}

@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Reviews a change for one pass of REVIEW.md — bugs, security or conformance — and reports findings with their demonstration. Reports, does not fix. Use it in the SDLC Deploy stage, one reviewer per pass, launched in parallel.
-tools: Read, Glob, Grep, Bash
+tools: Read, Glob, Grep, Bash, LSP
 disallowedTools: Agent
 model: sonnet
 effort: high

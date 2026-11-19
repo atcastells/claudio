@@ -5,6 +5,25 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.7.0 — 2026-11-19
+
+From the profile of the ASTRA sessions (13-19 Nov). Slug `.sdlc/claudio-3-7-0/`.
+`./install.sh` is enough; a project opts in to `## Agent defaults` in its own
+`CLAUDE.md` (no migration).
+
+- **Agents can use LSP**: scout, implementer, integrator, reviewer and
+  verifier list `LSP` in `tools`; symbols are looked up with LSP or the tags
+  index the repo's `CLAUDE.md` names, before `grep`.
+- **Repo agent defaults**: the integrator applies the `## Agent defaults`
+  section of the repo's `CLAUDE.md` to the task and every agent it launches;
+  the brief template states only the exceptions.
+- **Read-only build dir**: while another task builds or measures, read-only
+  agents get `CARGO_TARGET_DIR="$TMPDIR/claudio-target-ro"`, never the
+  workspace `target/`.
+- **`bash-habits` hook** (PostToolUse, Bash): a reminder, never a block, when
+  a test run keeps its output in no file and when a python/perl/ruby script
+  rewrites a non-temp file.
+
 ## 3.6.3 — 2026-11-19
 
 Fixes from the first session on 3.6.2 (ASTRA VIS-EST-001). Slug
