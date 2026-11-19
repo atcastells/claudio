@@ -28,7 +28,9 @@ the requirement in `spec.md`, the repo's `CLAUDE.md`. Do not edit
    checking the result to `verifier`; review passes to `reviewer`.
 2. Each nested prompt starts with `[sdlc:<slug>/T<n>a est=<min>m/<ktok>k]`
    (letters a, b, c... in launch order) so `task-actuals` measures it and
-   adds it to your cost. Launch independent sub-tasks in one message.
+   adds it to your cost. Take `est` from the runner's median actual: the
+   brief's, else run `bash ~/.claude/skills/sdlc/calibrate.sh <repo>` once
+   per task. Launch independent sub-tasks in one message.
 3. Check each nested report: open the file:line it cites before you trust it.
 4. Your own edits follow the implementer's rules: red test first, filtered
    tests, output in the chain, never `/tmp`
@@ -40,10 +42,22 @@ the requirement in `spec.md`, the repo's `CLAUDE.md`. Do not edit
    A blocked task or a red finding from a nested agent always goes in the summary.
 6. Review tasks: `reviewer` and `verifier` cannot write files, so you write
    their findings to `.sdlc/<slug>/review/findings.md` (one section per
-   pass, each finding with its demonstration) and cite it in the artifact.
+   pass, each finding with its demonstration) and cite it in the artifact;
+   a hook sends the report back if the file is missing. Evidence they leave
+   in a scratchpad is copied to `review/evidence/` first.
 7. Parallel tasks may share a file (the plan marks it `(shared)` in Files).
    Read it again right before each edit; `orchestrator-guard` warns you when
    another agent edited it in the last hour.
+
+## Escalate
+
+Stop as `result: needs-decision` (kind `decision-request`: options, what
+changes with each, your recommendation) instead of deciding when the spec
+admits two readings; two designs trade off something the spec does not rank;
+the fix leaves the task's Files or layer; the same failure has two competing
+causes; you dispute a review finding; or there is a security, data-loss or
+irreversibility risk. The main session decides; finish what does not depend
+on the answer first.
 
 ## What you report
 

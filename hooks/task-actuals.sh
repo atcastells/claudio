@@ -231,13 +231,23 @@ post_tool_use() {
         | ([$w[] | select((.message.id? | type) == "string")] | group_by(.message.id) | map(last)) as $msgs
         | ([$msgs[] | .message.usage | (.input_tokens // 0) + (.output_tokens // 0)
             + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)] | add // 0) as $tok
+        # usd_min: same price table and floor as subagent_stop
+        | {"claude-fable-5-2": [8, 40, 0.2], "claude-opus-5-5": [4, 20, 0.2],
+           "claude-sonnet-5-5": [2, 10, 0.1]} as $price
+        | ([$msgs[] | ($price[.message.model? // ""]) as $p
+            | if $p == null then null else .message.usage
+              | ((.input_tokens // 0) * $p[0] + (.output_tokens // 0) * $p[1]
+                 + (.cache_creation_input_tokens // 0) * $p[0] * 1.25
+                 + (.cache_read_input_tokens // 0) * $p[2]) / 1000000 end]) as $usds
+        | (if ($usds | length) > 0 and ($usds | all(. != null))
+           then ($usds | add * 100 | round / 100) else null end) as $usd
         | ((($n - $s) / 60) | r1) as $min
         | (($tok / 1000) | round) as $ktok
         | (if $em != null and $em > 0 then dev($min; $em) else null end) as $dm
         | (if $ek != null and $ek > 0 then dev($ktok; $ek) else null end) as $dt
         | {task: $task, runs_on: "main",
            model: ([$w[] | .message.model? // empty] | first // ""),
-           est_min: $em, est_ktok: $ek, min: $min, ktok: $ktok,
+           est_min: $em, est_ktok: $ek, min: $min, ktok: $ktok, usd_min: $usd,
            dev_min_pct: $dm, dev_tok_pct: $dt,
            flag: ((($dm // 0) | fabs) > 50 or (($dt // 0) | fabs) > 50),
            cause: (($st | capture("cause:[ \t]*(?<c>.*)") // {c: ""}) | .c | trim | sub("\\)$"; "") | trim | redact | .[0:200]),

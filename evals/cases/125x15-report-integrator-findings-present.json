@@ -1,0 +1,1 @@
+{"name": "report-check integrator: cited findings.md present passes", "kind": "hook", "script": "evals/scripts/report-integrator-test.sh", "args": ["{root}/hooks", "findings-present"], "expect_exit": 0, "contains": "all passed", "origin": "K013 T15 and S1-T2 T20 review evidence lost (claudio-3-5-1)"}

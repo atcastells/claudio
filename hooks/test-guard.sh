@@ -48,9 +48,15 @@ fi
 # 2. Removing assertions (only meaningful on Edit, where we have both sides)
 if [ -n "$old" ]; then
   # -o + wc -l counts occurrences; grep -c would count lines, and a test fits on one
-  count() { printf '%s' "$1" | grep -aoE -e 'expect\(|assert[A-Za-z_]*\(|\bassert\b|should\.|\.toBe|require\.(New|Equal)' 2>/dev/null | wc -l | tr -d ' '; }
+  count() { printf '%s' "$1" | grep -aoE -e 'expect\(|assert[A-Za-z_]*!?\(|\bassert\b|should\.|\.toBe|require\.(New|Equal)' 2>/dev/null | wc -l | tr -d ' '; }
   o=$(count "$old"); n=$(count "$new")
-  [ "$o" -gt 0 ] && [ "$n" -lt "$o" ] && block "removes assertions ($o -> $n)."
+  if [ "$o" -gt 0 ] && [ "$n" -lt "$o" ]; then
+    # A pure dedupe passes: every line of old that holds an assertion is still
+    # in new, word for word (leading/trailing spaces aside)
+    lines() { printf '%s\n' "$1" | grep -aE -e 'expect\(|assert[A-Za-z_]*!?\(|\bassert\b|should\.|\.toBe|require\.(New|Equal)' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | sort -u; }
+    missing=$(comm -23 <(lines "$old") <(lines "$new") | head -n 1)
+    [ -n "$missing" ] && block "removes assertions ($o -> $n)."
+  fi
 fi
 
 # 3. Commenting out a test block

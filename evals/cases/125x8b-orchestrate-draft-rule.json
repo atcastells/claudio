@@ -1,0 +1,1 @@
+{"name": "orchestrate: only T0 runs before the plan is approved", "kind": "file_contains", "file": "{root}/skills/orchestrate/SKILL.md", "contains": "Only `T0` (inspection", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

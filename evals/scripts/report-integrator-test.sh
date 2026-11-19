@@ -1,7 +1,7 @@
 #!/bin/bash
 # Scenarios: subagent-report-check on integrator reports (Orchestrate mode artifacts).
 #   usage: report-integrator-test.sh <hooks-dir> <case>
-#   cases: no-artifact missing-file missing-field good
+#   cases: no-artifact missing-file missing-field good findings-missing findings-present
 set -uo pipefail
 hooks="$1"; c="$2"
 tmp=$(mktemp -d)
@@ -46,6 +46,18 @@ case "$c" in
     art "$repo/.sdlc/demo/work/T1-result.md"
     stop $'ARTIFACT: .sdlc/demo/work/T1-result.md\ntask: demo/T1'; rc=$?
     [ "$rc" = 0 ] || fail "good artifact: exit $rc ($(cat "$tmp/err"))"
+    ;;
+  findings-missing)
+    art "$repo/.sdlc/demo/work/T8-result.md"; echo "Findings: .sdlc/demo/review/findings.md" >> "$repo/.sdlc/demo/work/T8-result.md"
+    stop 'ARTIFACT: .sdlc/demo/work/T8-result.md'; rc=$?
+    [ "$rc" = 2 ] || fail "cited findings.md missing: exit $rc"
+    grep -q 'findings.md' "$tmp/err" || fail "message does not name findings.md"
+    ;;
+  findings-present)
+    art "$repo/.sdlc/demo/work/T8-result.md"; echo "Findings: .sdlc/demo/review/findings.md" >> "$repo/.sdlc/demo/work/T8-result.md"
+    mkdir -p "$repo/.sdlc/demo/review"; echo "# Findings" > "$repo/.sdlc/demo/review/findings.md"
+    stop 'ARTIFACT: .sdlc/demo/work/T8-result.md'; rc=$?
+    [ "$rc" = 0 ] || fail "findings.md present: exit $rc ($(cat "$tmp/err"))"
     ;;
 esac
 if [ "$fails" -eq 0 ]; then echo "all passed"; exit 0; fi

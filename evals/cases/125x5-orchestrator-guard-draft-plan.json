@@ -1,0 +1,1 @@
+{"name": "orchestrator-guard: no plan row delegated while plan.md is a draft", "kind": "hook", "script": "evals/scripts/orchestrator-guard-test.sh", "args": ["{root}/hooks", "draft-plan"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

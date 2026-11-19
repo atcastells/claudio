@@ -1,0 +1,1 @@
+{"name": "integrator: risk is always escalated", "kind": "file_contains", "file": "{root}/agents/integrator.md", "contains": "or there is a security, data-loss or", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

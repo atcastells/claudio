@@ -1,0 +1,1 @@
+{"name": "mode: Orchestrate notice says not to call the advisor", "kind": "file_contains", "file": "{root}/hooks/mode.sh", "contains": "Do not call the advisor tool", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

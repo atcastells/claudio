@@ -1,0 +1,598 @@
+== 0*
+credential-guard blocks a SonarQube token                 PASS
+credential-guard blocks a password literal                PASS
+credential-guard blocks a private key                     PASS
+credential-guard allows an env var                        PASS
+credential-guard allows normal code                       PASS
+test-guard blocks .skip                                   PASS
+test-guard blocks removing assertions                     PASS
+test-guard allows adding assertions                       PASS
+test-guard ignores non-test code                          PASS
+test-guard blocks a skip in a test notebook               PASS
+---------------------------------------------------------
+PASS: 10   FAIL: 0   (repo: /sessions/rcw-017b6e5jy9x2fjs7nsq4nrph/mnt/claude-sdlc)
+rc=0
+== 1[0-1]*
+production-gate blocks a deploy to prod                   PASS
+plan template: Runs on, Depends, Est columns before StatusPASS
+plan template: Schedule section                           PASS
+plan template: Estimate vs actual section                 PASS
+plan template: main tasks are timed through Edit and in progressPASS
+plan template: a main task closes with done (cause: ...)  PASS
+implementer runs on sonnet                                PASS
+implementer effort is medium                              PASS
+implementer can edit and write                            PASS
+implementer maxTurns is 60                                PASS
+implementer report carries the deviation cause            PASS
+task-actuals: SubagentStop scenarios                      PASS
+calibrate: no history prints the starting table           PASS
+calibrate: medians per runs_on from history               PASS
+calibrate: repo 2 and machine log 6 use all               PASS
+calibrate: repo with 5 uses repo                          PASS
+calibrate: starting table has the measured implementer rowPASS
+calibrate: repo history without a machine log uses repo   PASS
+calibrate: median actual line per runner                  PASS
+sdlc: delegated tasks carry the estimate tag              PASS
+sdlc: estimates come from calibrate.sh                    PASS
+sdlc: a wave launches in one message                      PASS
+sdlc: diff checked against the plan after a wave          PASS
+sdlc: actuals calibrate estimates, not people             PASS
+report lib: subagent_report scenarios                     PASS
+context template has a Learned section                    PASS
+context template states the data rule                     PASS
+implementer reads context.md                              PASS
+implementer report format has Learned line                PASS
+sdlc: main writes context.md before the first wave        PASS
+sdlc: Learned lines folded after each wave                PASS
+project-profile: SessionStart scenarios                   PASS
+run.sh: profile cases run in installed mode               PASS
+repo-setup skill mentions the project profile declaration PASS
+repo-setup upgrade keeps other workflow.json keys         PASS
+template profile: CLAUDE.md has Glossary and tone         PASS
+template profile: CLAUDE.md has Quality criteria          PASS
+template profile: CLAUDE.md has Repository policy         PASS
+template profile: CLAUDE.md has the nothing-to-act-on sectionPASS
+template profile: profile.env exists with WF_ keys        PASS
+template profile: evals/cases has the example case        PASS
+run.sh: file_lacks passes and fails, with and without untilPASS
+rules: write scenarios                                    PASS
+install: leaves ~/.claude/rules/ alone                    PASS
+rules skill: asks the action first                        PASS
+rules skill: asks with AskUserQuestion                    PASS
+rules skill: every file operation goes through rules.sh   PASS
+rules skill: tells the user a rule is not a lock          PASS
+rules skill: has a Gotchas section                        PASS
+rules skill: rule text passed through a quoted heredoc    PASS
+production-gate blocks kubectl on prod                    PASS
+run.sh: EVALS_RESULT_JSON writes the result file          FAIL (exit=1, expected=0)
+install-verify: runs the suite, writes the result and replaces a live runPASS
+install-verify: SessionStart notice scenarios             PASS
+quiet install: default is quiet and verifies in the background; --verbose keeps the foreground suitePASS
+run.sh: case repo field, EVALS_SKIP_REPO and EVALS_REPO   PASS
+verifier runs the incident evals of the repo under test   PASS
+sdlc stage 6: incident evals in a product repo set repo   PASS
+evals-on-config-change runs the suite with EVALS_SKIP_REPO=1PASS
+install.sh --verbose runs the suite with EVALS_SKIP_REPO=1PASS
+install: company repo scenarios                           PASS
+company fixture rules name nothing of the workflow        PASS
+workflow-install skill: asks with AskUserQuestion         PASS
+workflow-install skill: clone command shape               PASS
+workflow-install skill: install command shape             PASS
+workflow-install skill: does not run the command          PASS
+workflow-install skill: does not search the disk          PASS
+company-profile: SessionStart notice when the company rules repo is missingPASS
+mode lib: marker path and session id validation           PASS
+mode hook: /vibe toggles the session marker and re-injects contextPASS
+status line shows Spec by default (valid id, no marker)   PASS
+status line shows Vibe when the session marker exists     PASS
+status line shows Spec without session_id                 PASS
+status line ignores a traversal session_id that would hit a real markerPASS
+vibe skill: reads the global map first                    PASS
+vibe SKILL.md <= 100 lines                                PASS
+vibe skill: only a typed /vibe loads it                   PASS
+vibe skill: the stop list still applies                   PASS
+vibe skill: updates the map each iteration                PASS
+vibe skill: small changes open no slug folder             PASS
+vibe skill: promotion seeds an intent                     PASS
+vibe skill: git stays with the developer                  PASS
+vibe skill: verify before claiming still applies          PASS
+vibe skill: same data rules as any artifact               PASS
+map template: class done                                  PASS
+map template: class dropped                               PASS
+map template: class idea                                  PASS
+map template: class wip                                   PASS
+topic template: done and left                             PASS
+core CLAUDE.md: Spec is the default mode, Vibe the exceptionPASS
+mode.sh wired on UserPromptSubmit in settings             PASS
+settings template: mode.sh on SessionStart with resume    PASS
+plan hint: two-open                                       PASS
+plan hint: all-done                                       PASS
+plan hint: bad-est                                        PASS
+plan hint: extra-cols                                     PASS
+plan hint: task-clock                                     PASS
+plan hint: task-closed                                    PASS
+plan hint: task-nostart                                   PASS
+status line hint: open task shows task and plan           PASS
+status line hint: no open task shows plan only            PASS
+status line hint: 69 percent with task has no compact hintPASS
+status line hint: 70 percent with task has compact hint   PASS
+status line hint: 90 percent without plan has compact hintPASS
+status line hint: bad plans leave the line as today       PASS
+plan hint: octal                                          PASS
+plan hint: short-row                                      PASS
+plan hint: huge-est                                       PASS
+plan hint: long-line                                      PASS
+plan hint: letter-id                                      PASS
+install: company phrases valid                            PASS
+install: company phrases missing                          PASS
+install: company phrases dotdot                           PASS
+install: company phrases symlink                          PASS
+install: company phrases notarray                         PASS
+install: company phrases toomany                          PASS
+install: company phrases longitem                         PASS
+install: company phrases control                          PASS
+install: company phrases settings replace                 PASS
+install: company phrases settings nokey                   PASS
+install: company phrases settings fresh                   PASS
+install: company phrases multivalue                       PASS
+install: company phrases c1control                        PASS
+install: company phrases bidi                             PASS
+install: company phrases blank                            PASS
+README main part has no jargon (hook, eval, jq, semver, subagent, model names, .sdlc, YAML/JSON)PASS
+README fits on one screen (<= 45 lines)                   PASS
+README paste sentence points the agent at docs/install.md PASS
+install steps: check git and jq, install them only after askingPASS
+install steps: clone or update ~/claudio                  PASS
+install steps: ask about an organization profile          PASS
+install steps: explain the result in plain words          PASS
+README links the technical details                        PASS
+version: a Claudio clone in a folder still named claude-sdlc is recognisedPASS
+implementer leaves a running report for a partial stop    PASS
+verifier leaves a running report for a partial stop       PASS
+reviewer leaves a running report for a partial stop       PASS
+scout leaves a running report for a partial stop          PASS
+scout description names the size of question it takes     PASS
+verifier runs the suite last, and not when main gave its resultPASS
+verifier counts a suite result given with its command and outputPASS
+sdlc Test stage: main runs the suite and passes the resultPASS
+sdlc: a partial subagent output is resumed, not relaunchedPASS
+report-check: implementer needs a Red/Mutation line with literal output; TASK id hintPASS
+implementer report carries Red or Mutation with literal outputPASS
+implementer reports a test that passed before the change as suchPASS
+plan template says task IDs are T<n>                      PASS
+---------------------------------------------------------
+PASS: 146   FAIL: 1   (repo: /sessions/rcw-017b6e5jy9x2fjs7nsq4nrph/mnt/claude-sdlc)
+Failed:
+  - run.sh: EVALS_RESULT_JSON writes the result file
+rc=1
+== 11[0-9]*
+run.sh: EVALS_RESULT_JSON writes the result file          FAIL (exit=1, expected=0)
+install-verify: runs the suite, writes the result and replaces a live runPASS
+install-verify: SessionStart notice scenarios             PASS
+quiet install: default is quiet and verifies in the background; --verbose keeps the foreground suitePASS
+run.sh: case repo field, EVALS_SKIP_REPO and EVALS_REPO   PASS
+verifier runs the incident evals of the repo under test   PASS
+sdlc stage 6: incident evals in a product repo set repo   PASS
+evals-on-config-change runs the suite with EVALS_SKIP_REPO=1PASS
+install.sh --verbose runs the suite with EVALS_SKIP_REPO=1PASS
+install: company repo scenarios                           PASS
+company fixture rules name nothing of the workflow        PASS
+workflow-install skill: asks with AskUserQuestion         PASS
+workflow-install skill: clone command shape               PASS
+workflow-install skill: install command shape             PASS
+workflow-install skill: does not run the command          PASS
+workflow-install skill: does not search the disk          PASS
+company-profile: SessionStart notice when the company rules repo is missingPASS
+mode lib: marker path and session id validation           PASS
+mode hook: /vibe toggles the session marker and re-injects contextPASS
+status line shows Spec by default (valid id, no marker)   PASS
+status line shows Vibe when the session marker exists     PASS
+status line shows Spec without session_id                 PASS
+status line ignores a traversal session_id that would hit a real markerPASS
+vibe skill: reads the global map first                    PASS
+vibe SKILL.md <= 100 lines                                PASS
+vibe skill: only a typed /vibe loads it                   PASS
+vibe skill: the stop list still applies                   PASS
+vibe skill: updates the map each iteration                PASS
+vibe skill: small changes open no slug folder             PASS
+vibe skill: promotion seeds an intent                     PASS
+vibe skill: git stays with the developer                  PASS
+vibe skill: verify before claiming still applies          PASS
+vibe skill: same data rules as any artifact               PASS
+map template: class done                                  PASS
+map template: class dropped                               PASS
+map template: class idea                                  PASS
+map template: class wip                                   PASS
+topic template: done and left                             PASS
+core CLAUDE.md: Spec is the default mode, Vibe the exceptionPASS
+mode.sh wired on UserPromptSubmit in settings             PASS
+settings template: mode.sh on SessionStart with resume    PASS
+plan hint: two-open                                       PASS
+plan hint: all-done                                       PASS
+plan hint: bad-est                                        PASS
+plan hint: extra-cols                                     PASS
+plan hint: task-clock                                     PASS
+plan hint: task-closed                                    PASS
+plan hint: task-nostart                                   PASS
+status line hint: open task shows task and plan           PASS
+status line hint: no open task shows plan only            PASS
+status line hint: 69 percent with task has no compact hintPASS
+status line hint: 70 percent with task has compact hint   PASS
+status line hint: 90 percent without plan has compact hintPASS
+status line hint: bad plans leave the line as today       PASS
+plan hint: octal                                          PASS
+plan hint: short-row                                      PASS
+plan hint: huge-est                                       PASS
+plan hint: long-line                                      PASS
+plan hint: letter-id                                      PASS
+install: company phrases valid                            PASS
+install: company phrases missing                          PASS
+install: company phrases dotdot                           PASS
+install: company phrases symlink                          PASS
+install: company phrases notarray                         PASS
+install: company phrases toomany                          PASS
+install: company phrases longitem                         PASS
+install: company phrases control                          PASS
+install: company phrases settings replace                 PASS
+install: company phrases settings nokey                   PASS
+install: company phrases settings fresh                   PASS
+install: company phrases multivalue                       PASS
+install: company phrases c1control                        PASS
+install: company phrases bidi                             PASS
+install: company phrases blank                            PASS
+README main part has no jargon (hook, eval, jq, semver, subagent, model names, .sdlc, YAML/JSON)PASS
+README fits on one screen (<= 45 lines)                   PASS
+README paste sentence points the agent at docs/install.md PASS
+install steps: check git and jq, install them only after askingPASS
+install steps: clone or update ~/claudio                  PASS
+install steps: ask about an organization profile          PASS
+install steps: explain the result in plain words          PASS
+README links the technical details                        PASS
+version: a Claudio clone in a folder still named claude-sdlc is recognisedPASS
+implementer leaves a running report for a partial stop    PASS
+verifier leaves a running report for a partial stop       PASS
+reviewer leaves a running report for a partial stop       PASS
+scout leaves a running report for a partial stop          PASS
+scout description names the size of question it takes     PASS
+verifier runs the suite last, and not when main gave its resultPASS
+verifier counts a suite result given with its command and outputPASS
+sdlc Test stage: main runs the suite and passes the resultPASS
+sdlc: a partial subagent output is resumed, not relaunchedPASS
+report-check: implementer needs a Red/Mutation line with literal output; TASK id hintPASS
+implementer report carries Red or Mutation with literal outputPASS
+implementer reports a test that passed before the change as suchPASS
+plan template says task IDs are T<n>                      PASS
+---------------------------------------------------------
+PASS: 95   FAIL: 1   (repo: /sessions/rcw-017b6e5jy9x2fjs7nsq4nrph/mnt/claude-sdlc)
+Failed:
+  - run.sh: EVALS_RESULT_JSON writes the result file
+rc=1
+== 12[0-4]*
+production-gate still scans a heredoc body written to a file (use Write/Edit for files)PASS
+production-gate still scans a heredoc fed to bash         PASS
+production-gate still scans the command that opens a heredocPASS
+implementer starts and stops background processes in one commandPASS
+implementer copies repo files, never moves them out       PASS
+implementer runs git in its own command                   PASS
+implementer cleans its temporary files in the same commandPASS
+sdlc: git in its own command                              PASS
+verifier starts and stops background processes in one commandPASS
+verifier copies repo files, never moves them out          PASS
+verifier runs git in its own command                      PASS
+verifier cleans its temporary files in the same command   PASS
+production-gate still scans a <<- heredoc body            PASS
+production-gate still scans a heredoc piped to bash       PASS
+production-gate still scans a heredoc fed to python       PASS
+production-gate blocks a command after a heredoc with a hyphenated tagPASS
+production-gate blocks a command substitution inside an unquoted heredoc bodyPASS
+production-gate message points file writes to Write/Edit  PASS
+plan template caps a delegated task at 3 rows             PASS
+plan template allows a declared seam task                 PASS
+plan template asks before opening windows                 PASS
+plan template has a Review section with a signed waiver   PASS
+sdlc: a plan is not closed with Review empty              PASS
+sdlc: orchestration tracked on main rows                  PASS
+sdlc: no figure without a run that could fail             PASS
+bash-file-check: quiet scenarios (no change, non-git, ignored, missing marker, bad id) and changed_files listingPASS
+bash-file-check: credential-guard and test-guard run after the fact on files changed through BashPASS
+bash-file-check: plan rows reach task-actuals after a Bash change and the evals hook never runsPASS
+bash-file-check: only 50 files and up to 1 MB per file are checked; the skip is reportedPASS
+bash-file-check registered in settings                    PASS
+implementer edits repo files with Edit or Write           PASS
+verifier never changes repo files; shell writes only to temp filesPASS
+sdlc: edit repo files with Edit or Write                  PASS
+bash-file-check: never runs repo git config code, checks ++ lines and glob names, stays cheap on a dirty tree, stays inside the top levelPASS
+bash-file-check: a failed Bash command is checked too; marker symlink not followed; hostile names printed sanitized; newline id rejected== 12[0-4]*
+production-gate still scans a heredoc body written to a file (use Write/Edit for files)PASS
+production-gate still scans a heredoc fed to bash         PASS
+production-gate still scans the command that opens a heredocPASS
+implementer starts and stops background processes in one commandPASS
+implementer copies repo files, never moves them out       PASS
+implementer runs git in its own command                   PASS
+implementer cleans its temporary files in the same commandPASS
+sdlc: git in its own command                              PASS
+verifier starts and stops background processes in one commandPASS
+verifier copies repo files, never moves them out          PASS
+verifier runs git in its own command                      PASS
+verifier cleans its temporary files in the same command   PASS
+production-gate still scans a <<- heredoc body            PASS
+production-gate still scans a heredoc piped to bash       PASS
+production-gate still scans a heredoc fed to python       PASS
+production-gate blocks a command after a heredoc with a hyphenated tagPASS
+production-gate blocks a command substitution inside an unquoted heredoc bodyPASS
+production-gate message points file writes to Write/Edit  PASS
+plan template caps a delegated task at 3 rows             PASS
+plan template allows a declared seam task                 PASS
+plan template asks before opening windows                 PASS
+plan template has a Review section with a signed waiver   PASS
+sdlc: a plan is not closed with Review empty              PASS
+sdlc: orchestration tracked on main rows                  PASS
+sdlc: no figure without a run that could fail             PASS
+bash-file-check: quiet scenarios (no change, non-git, ignored, missing marker, bad id) and changed_files listingPASS
+bash-file-check: credential-guard and test-guard run after the fact on files changed through BashPASS
+bash-file-check: plan rows reach task-actuals after a Bash change and the evals hook never runsPASS
+bash-file-check: only 50 files and up to 1 MB per file are checked; the skip is reportedPASS
+bash-file-check registered in settings                    PASS
+implementer edits repo files with Edit or Write           PASS
+verifier never changes repo files; shell writes only to temp filesPASS
+sdlc: edit repo files with Edit or Write                  PASS
+bash-file-check: never runs repo git config code, checks ++ lines and glob names, stays cheap on a dirty tree, stays inside the top levelPASS
+bash-file-check: a failed Bash command is checked too; marker symlink not followed; hostile names printed sanitized; newline id rejectedFAIL (exit=1, expected=0)
+evals hook: registered with asyncRewake and timeout 600, in the template and in a clean installPASS
+evals-on-config-change: red report is trimmed to the FAIL lines and the summary, green is silentPASS
+evals-on-config-change: concurrent invocations coalesce into one pending re-run, stale locks are taken over, symlinked locks are refusedFAIL (exit=1, expected=0)
+evals-on-config-change: a lock is live only for a real hook process, release does not lose a run, signals stop the suite, crashes and unusable lock dirs still reportPASS
+implementer: no full suite per task                       PASS
+implementer: suite runs once after the wave               PASS
+implementer: test output to a file, no rerun with nothing changedPASS
+verifier: reuses the wave test output                     PASS
+implementer: failure budget (same failure twice, four runs)PASS
+report-check: implementer without Attempts blocked        PASS
+sdlc: lookups over two searches go to the scout           PASS
+sdlc: no Fable 5.1 as main model                          PASS
+sdlc: Fable 5.2 advises, Opus keeps executing             PASS
+repo-setup: Rust repos get nextest and cargo check        PASS
+migration 3.3.0 exists                                    PASS
+run.sh: EVALS_ONLY runs only the named cases              PASS
+evals-on-config-change runs the cases that name the file  PASS
+---------------------------------------------------------
+PASS: 50   FAIL: 2   (repo: /sessions/rcw-017b6e5jy9x2fjs7nsq4nrph/mnt/claude-sdlc)
+Failed:
+  - bash-file-check: a failed Bash command is checked too; marker symlink not followed; hostile names printed sanitized; newline id rejected
+  - evals-on-config-change: concurrent invocations coalesce into one pending re-run, stale locks are taken over, symlinked locks are refused
+rc=1
+== [2-9]*
+intent skill installed                                    PASS
+sdlc stage 1 delegates to the intent skill                PASS
+repo-setup skill installed                                PASS
+repo-setup check.sh present                               PASS
+credential-guard blocks a token in NotebookEdit           PASS
+write guards cover NotebookEdit                           PASS
+global settings guard git add                             PASS
+global settings guard bare git commit                     PASS
+global settings guard bare git add                        PASS
+project template guards bare git push                     PASS
+version: project behind lists pending migrations          PASS
+version: project at 1.1.0 is offered only the 2.0.0 migrationPASS
+version: 1.1.0 to 2.0.0 does not repeat 1.1.0             PASS
+version: does not list migrations already applied         PASS
+version: up-to-date project says nothing                  PASS
+version: workflow project without a version is notified   PASS
+version: repo not using the workflow says nothing         PASS
+version: project ahead asks for install.sh                PASS
+version: source repo ahead asks for install.sh            PASS
+version: invalid value is reported, never executed        PASS
+version: 01.1.0 is not semver                             PASS
+version: broken workflow.json reported as invalid JSON    PASS
+version: missing migrations/ is reported, asks install.sh PASS
+version: behind with no project migrations (patch) stays silentPASS
+version: no repeated notice on resume                     PASS
+version: output is SessionStart additionalContext         PASS
+version: notices are prefixed Claudio:                    PASS
+repo declares a strict semver VERSION                     PASS
+migration 1.1.0 installed                                 PASS
+migration 2.0.0 installed                                 PASS
+migration 2.3.0 installed                                 PASS
+migration 2.4.0 installed                                 PASS
+workflow-version-check registered in settings             PASS
+check.sh: project behind gives a version WARN             PASS
+check.sh: up-to-date project gives a version PASS         PASS
+check.sh: behind with no project migrations passes        PASS
+check.sh: CLAUDE.md global + project > 200 lines is a FAILPASS
+repo-setup has an upgrade mode                            PASS
+repo-setup records workflow_version                       PASS
+CLAUDE.md has the stopping-and-continuing rule            PASS
+stop list includes an unapproved plan.md                  PASS
+CLAUDE.md sets the three closing headings                 PASS
+CLAUDE.md requires a real verification of the change      PASS
+CLAUDE.md asks to flag what is unconfirmed                PASS
+core CLAUDE.md <= 75 lines (resent every turn)            PASS
+installed CLAUDE.md (core + profile) <= 110 lines         PASS
+plan template: Done means                                 PASS
+plan template: Stop and ask if                            PASS
+plan template: Status column                              PASS
+sdlc: Build keeps the Status column                       PASS
+REVIEW: Important = blocks merge, with a demonstration    PASS
+verifier runs on sonnet                                   PASS
+verifier runs at effort high                              PASS
+verifier maxTurns is 60                                   PASS
+verifier: findings carry a demonstration                  PASS
+sdlc: effort and model ladder                             PASS
+sdlc: measure cost with /usage                            PASS
+sdlc SKILL.md <= 160 lines                                PASS
+sdlc: check subagent evidence                             PASS
+reviewer runs on sonnet                                   PASS
+reviewer runs at effort high                              PASS
+reviewer tools are read-only                              PASS
+reviewer report starts with PASS: <pass>                  PASS
+report-check: valid verifier report passes                PASS
+report-check: verifier without VERDICT blocked            PASS
+report-check: IMPORTANT without demonstration blocked     PASS
+report-check: valid reviewer report passes                PASS
+report-check: reviewer without PASS blocked               PASS
+report-check: other agents untouched                      PASS
+report-check: stop_hook_active lets it stop               PASS
+report-check: valid implementer report passes             PASS
+report-check: implementer without TASK blocked            PASS
+report-check: implementer without Deviation cause blocked PASS
+report-check: RESULT must be exactly done or blocked      PASS
+report-check: SubagentHandback PreToolUse scenarios (once per agent, no loop)PASS
+plan-resume: lists open tasks after compaction            PASS
+plan-resume: output is SessionStart additionalContext     PASS
+plan-resume: all tasks done stays silent                  PASS
+plan-resume: repo without .sdlc stays silent              PASS
+plan-resume: only table rows, last cell even without trailing pipePASS
+plan-resume: only the Tasks section, not the Estimate vs actual tablePASS
+subagent-report-check registered in settings              PASS
+plan-resume registered in settings                        PASS
+SubagentStop matcher names reviewer exactly               PASS
+hook registered: task-actuals                             PASS
+PostToolUse matcher for task-actuals                      PASS
+SubagentStop matcher names implementer exactly            PASS
+PreToolUse matcher names SubagentHandback exactly         PASS
+project-profile hook registered on SessionStart           PASS
+sdlc: Stage 5 runs three reviewer subagents               PASS
+sdlc: Haiku never edits; Sonnet edits only as implementer PASS
+sdlc: effort change keeps the cache on subscription       PASS
+sdlc: pin the model per agent, not by env var             PASS
+sdlc: dynamic workflow only on request                    PASS
+sdlc: advisor before switching to Fable                   PASS
+scout runs on haiku                                       PASS
+scout runs at effort low                                  PASS
+scout caps its turns at 15                                PASS
+scout tools are read-only                                 PASS
+scout cites file:line                                     PASS
+sdlc: scout is Haiku 5.5                                  PASS
+sdlc: Haiku price step at 100K                            PASS
+version: source ahead gives the install command           PASS
+version: the developer runs the install command           PASS
+version: project ahead gives pull + install               PASS
+version: incomplete install gives the command             PASS
+version: a Claudio clone ahead is noticed                 PASS
+version: a Claudio clone is not treated as a project      PASS
+version: a clone at the installed version stays silent    PASS
+version: no install command for a source dir that no longer existsPASS
+status line shows session cost                            PASS
+status line shows effort                                  PASS
+status line without a cost field does not invent one      PASS
+check-public: leak scenarios                              PASS
+gitignore excludes private profiles                       PASS
+install: profile scenarios                                PASS
+credential-guard names the profile's secrets manager      PASS
+credential-guard without a profile uses generic text      PASS
+profile.env never executes $(...) or backticks            PASS
+production-gate names the profile's policy                PASS
+production-gate without a profile uses a generic policy   PASS
+profile.env with UTF-8 accents loads under LC_ALL=C       PASS
+credential-guard: repo profile overrides the secrets managerPASS
+production-gate: repo profile overrides the policy name   PASS
+guard hooks: repo profile ignored when symlinked, oversized or undeclaredPASS
+---------------------------------------------------------
+PASS: 125   FAIL: 0   (repo: /sessions/rcw-017b6e5jy9x2fjs7nsq4nrph/mnt/claude-sdlc)
+rc=0
+== 1[3-9]*
+production-gate does not mistake productList              PASS
+production-gate does not fire on its own name in docs     PASS
+production-gate still blocks prod-something with an actionPASS
+production-gate blocks a namespace named like the hook    PASS
+production-gate blocks production-gateway                 PASS
+production-gate blocks production-gate-eu                 PASS
+CLAUDE.md keeps git reserved for the developer            PASS
+CLAUDE.md forbids AI mentions                             PASS
+no mcp.json with credentials                              PASS
+sdlc skill installed                                      PASS
+credential-guard registered in settings                   PASS
+evals-on-config-change registered in settings             PASS
+production-gate registered in settings                    PASS
+test-guard registered in settings                         PASS
+evals-on-config-change ignores unrelated files            PASS
+---------------------------------------------------------
+PASS: 15   FAIL: 0   (repo: /sessions/rcw-017b6e5jy9x2fjs7nsq4nrph/mnt/claude-sdlc)
+rc=0
+== 12[5-9]*
+mode lib: /orchestrate marker apart from Vibe             PASS
+mode hook: /orchestrate toggles its marker, re-injected after compact and resumePASS
+status line shows Orch when the orchestrate marker exists PASS
+orchestrator-guard: main-edit                             PASS
+orchestrator-guard: sub-edit                              PASS
+orchestrator-guard: sdlc-write                            PASS
+orchestrator-guard: git-read                              PASS
+orchestrator-guard: no-marker                             PASS
+orchestrator-guard registered in settings                 PASS
+orchestrator-guard: cross-chain                           PASS
+orchestrator-guard: git-write                             PASS
+orchestrator-guard: shared-edit                           PASS
+integrator runs on opus                                   PASS
+integrator runs at effort medium                          PASS
+integrator can launch the nested agents                   PASS
+implementer cannot launch agents (chain stays at two levels)PASS
+reviewer cannot launch agents (chain stays at two levels) PASS
+scout cannot launch agents (chain stays at two levels)    PASS
+verifier cannot launch agents (chain stays at two levels) PASS
+integrator reports with an artifact path                  PASS
+integrator tags nested prompts with letter task ids       PASS
+integrator puts blocked and red findings in the summary   PASS
+artifact template has the cost field                      PASS
+artifact template has the data field                      PASS
+artifact template has the evidence field                  PASS
+artifact template has the files field                     PASS
+artifact template has the from field                      PASS
+artifact template has the kind field                      PASS
+artifact template has the persist field                   PASS
+artifact template has the regen field                     PASS
+artifact template has the result field                    PASS
+artifact template has the task field                      PASS
+artifact template caps the summary at 15 lines            PASS
+orchestrate skill: persist useful and expensive           PASS
+orchestrate skill: raw output is never persisted          PASS
+orchestrate skill: discard by default                     PASS
+orchestrate skill: plan task ids carry no letter          PASS
+sdlc skill points to the orchestrate skill                PASS
+orchestrate SKILL.md <= 80 lines                          PASS
+report-check integrator: no-artifact                      PASS
+report-check integrator: missing-file                     PASS
+report-check integrator: missing-field                    PASS
+report-check integrator: good                             PASS
+task-actuals: integrator artifact cost written            PASS
+task-actuals: integrator artifact cost nested             PASS
+task-actuals: cross-repo                                  PASS
+task-actuals: cwd-in-sdlc                                 PASS
+task-actuals: no-chain                                    PASS
+repo-setup ignores the orchestrate work folder            PASS
+repo-setup check warns without the work folder ignored    PASS
+migration 3.4.0 exists                                    PASS
+orchestrate clean.sh: deletes only work/ and claudio-* scratchPASS
+orchestrate 3.5.0: allow-test                             PASS
+orchestrate 3.5.0: chain                                  PASS
+orchestrate 3.5.0: model                                  PASS
+plan-resume: active chain and delegated tasks with no artifactPASS
+plan-resume runs on resume too                            PASS
+integrator keeps logs in the chain review/, not /tmp      PASS
+integrator writes review findings for reviewer and verifierPASS
+integrator deletes only with clean.sh                     PASS
+plan template marks shared files of a wave                PASS
+orchestrate skill: active chain across repos              PASS
+global settings: git add/commit/push ask, history rewrites deniedPASS
+project template: git add/commit/push ask, history rewrites deniedPASS
+global settings allow the orchestrate clean script        PASS
+migration 3.5.0 exists                                    PASS
+orchestrator-guard: more read-only git (branch list form, ls-files, rev-parse, merge-base)PASS
+test-guard allows removing an exact duplicate assertion   PASS
+test-guard allows removing a duplicated assert!           PASS
+test-guard blocks removing a distinct Rust assertion (assert_eq! counted too)PASS
+implementer: BSD sed on macOS, red step never skipped     PASS
+report-check integrator: cited review/findings.md must existPASS
+report-check integrator: cited findings.md present passes PASS
+integrator: escalation criteria to the main session       PASS
+integrator: risk is always escalated                      PASS
+orchestrate: main decides needs-decision, never sends it backPASS
+mode: Orchestrate notice says not to call the advisor     PASS
+orchestrate: no advisor in the main session               PASS
+orchestrator-guard: chained and piped git reads           PASS
+orchestrator-guard: no plan row delegated while plan.md is a draftPASS
+orchestrate: prior chains and design docs are read in T0, not by mainPASS
+orchestrate: only T0 runs before the plan is approved     PASS
+integrator: nested est from calibrate.sh medians          PASS
+---------------------------------------------------------
+PASS: 83   FAIL: 0   (repo: /sessions/rcw-017b6e5jy9x2fjs7nsq4nrph/mnt/claude-sdlc)
+rc=0

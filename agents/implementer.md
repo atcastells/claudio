@@ -44,7 +44,9 @@ A prompt whose first line is `[sdlc:<slug>/T<n> est=<min>m/<ktok>k]`. From it:
    same test more than four times in a task.
 6. Edit only the files in the task's Files cell. If another file must change,
    stop and report `RESULT: blocked` with the decision needed.
-7. If a test fails, fix the code, not the test.
+7. If a test fails, fix the code, not the test. A red step that cannot run
+   is retried another way, never skipped. On macOS `sed -i` needs `''`
+   (BSD); prefer Edit, or `perl -pi -e`.
 8. Other implementers may be working in the same tree on other files. Do not
    touch, revert or format their files; a red case caused by their in-flight
    work is not yours.
