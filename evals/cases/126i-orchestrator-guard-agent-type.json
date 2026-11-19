@@ -1,0 +1,1 @@
+{"name": "orchestrator-guard: main launches only integrator and scout", "kind": "hook", "script": "evals/scripts/orchestrator-guard-test.sh", "args": ["{root}/hooks", "agent-type"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA VIS-EST-001, main launched verifier and reviewers and wrote their findings (claudio-3-6-3)"}

@@ -16,8 +16,8 @@
 #     transcript between both timestamps. Other runners are ignored.
 #   PreToolUse (Agent|Task, Orchestrate mode, main session): a plan row
 #     [sdlc:<slug>/T<n> ...] launched with an approved plan gets Status
-#     "in progress"; at the integrator's SubagentStop the row gets the
-#     artifact's result (done, blocked, needs-decision). Only rows not run by
+#     "in progress"; at SubagentStop the row gets the integrator artifact's
+#     result (done, blocked, needs-decision), or another agent's RESULT line. Only rows not run by
 #     main and with no letter (nested T5a are not plan rows).
 # Output tokens are not recorded: transcripts store usage at stream start.
 # Never blocks and never prints: any missing or bad input exits 0 silently.
@@ -187,8 +187,9 @@ subagent_stop() {
   machine_append "$line" "$(dirname "$(dirname "$chain")")" "$aid"
   if [ "$agent" = integrator ]; then
     stamp_cost "$chain" "$slug" "$logf" "$line" "$report"
-    plan_result "$chain" "$slug" "$(printf '%s' "$line" | jq -r '.task' 2>/dev/null)" "$report"
   fi
+  plan_result "$chain" "$slug" "$(printf '%s' "$line" | jq -r '.task' 2>/dev/null)" "$report" "$agent"
+
   return 0
 }
 
@@ -201,11 +202,18 @@ artifact_of() {
   printf '%s\n' "$1/work/$(basename "$apath")"
 }
 
-# plan_result <chain> <slug> <task> <report>: the artifact's result into the plan row
+# plan_result <chain> <slug> <task> <report> <agent>: the result into the plan
+# row. Integrator: its artifact's result. Any other agent run as a plan row:
+# the report's RESULT line, done when it has none (reviewers report findings).
 plan_result() {
   local art res
   printf '%s' "$3" | grep -qE '^T[0-9]+$' || return 0
   mode_is_orch "$(printf '%s' "$payload" | jq -r '.session_id // empty' 2>/dev/null)" || return 0
+  if [ "${5:-integrator}" != integrator ]; then
+    res=$(printf '%s\n' "$4" | sed -nE 's/^[[:space:]]*RESULT:[[:space:]]*(done|blocked|needs-decision).*/\1/p' | head -n 1)
+    set_status "$1/plan.md" "$3" "${res:-done}"
+    return 0
+  fi
   art=$(artifact_of "$1" "$2" "$4") || return 0
   res=$(awk 'NR == 1 && $0 != "---" { exit } NR > 1 && $0 == "---" { exit } /^result:/ { sub(/^result:[ \t]*/, ""); print $1; exit }' "$art")
   case "$res" in done|blocked|needs-decision) set_status "$1/plan.md" "$3" "$res" ;; esac

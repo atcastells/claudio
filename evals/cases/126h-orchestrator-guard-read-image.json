@@ -1,0 +1,1 @@
+{"name": "orchestrator-guard: main reads screenshots and images whole", "kind": "hook", "script": "evals/scripts/orchestrator-guard-test.sh", "args": ["{root}/hooks", "read-image"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA VIS-EST-001, two PNG reads under review/shots blocked (claudio-3-6-3)"}

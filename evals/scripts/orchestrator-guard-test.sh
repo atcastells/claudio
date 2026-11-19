@@ -3,7 +3,7 @@
 # Orchestrate mode, and nothing else.
 #   usage: orchestrator-guard-test.sh <hooks-dir> <case>
 #   cases: main-edit sub-edit sdlc-write git-read no-marker cross-chain git-write shared-edit
-#          git-read-more git-chain draft-plan read-limit
+#          git-read-more git-chain draft-plan read-limit read-image agent-type quoted-meta
 set -uo pipefail
 hooks="$1"; c="$2"
 tmp=$(mktemp -d)
@@ -162,6 +162,29 @@ case "$c" in
     run 2 "design doc whole" "$(p Read "{\"file_path\":\"$repo/docs/design/x.md\"}")"
     run 0 "skill file" "$(p Read "{\"file_path\":\"$HOME/.claude/skills/orchestrate/SKILL.md\"}")"
     run 0 "integrator reads code" "$(p Read "{\"file_path\":\"$repo/src/a.ts\"}" agent-1)"
+    ;;
+  read-image)
+    run 0 "screenshot under review/" "$(p Read "{\"file_path\":\"$repo/.sdlc/demo/review/shots/T10/01-general.png\"}")"
+    run 0 "JPG outside .sdlc" "$(p Read "{\"file_path\":\"$repo/docs/ref.JPG\"}")"
+    run 2 "log under review/ still limited" "$(p Read "{\"file_path\":\"$repo/.sdlc/demo/review/T10.log\"}")"
+    ;;
+  agent-type)
+    run 0 "integrator" "$(p Agent '{"subagent_type":"integrator","prompt":"[sdlc:demo/T0 est=1m/100k] x"}')"
+    run 0 "scout" "$(p Agent '{"subagent_type":"scout","prompt":"find x"}')"
+    run 2 "reviewer from main" "$(p Agent '{"subagent_type":"reviewer","prompt":"[sdlc:demo/T14 est=1m/100k] x"}')"
+    run 2 "verifier from main" "$(p Agent '{"subagent_type":"verifier","prompt":"[sdlc:demo/T13 est=1m/100k] x"}')"
+    run 2 "no subagent_type" "$(p Agent '{"prompt":"look around"}')"
+    run 0 "integrator launches a reviewer" "$(p Agent '{"subagent_type":"reviewer","prompt":"[sdlc:demo/T14a est=1m/100k] x"}' agent-1)"
+    ;;
+  quoted-meta)
+    run 0 "grep -E with parens and | in quotes" "$(p Bash "$(jq -nc --arg c 'git ls-files .sdlc | grep -E "/(intent|spec|plan)\.md$" | sort | tail -50' '{command:$c}')")"
+    run 0 "single-quoted alternation" "$(p Bash "$(jq -nc --arg c "git log --oneline | grep -E 'fix|feat'" '{command:$c}')")"
+    run 0 "cut in a pipe" "$(p Bash '{"command":"git ls-files .sdlc | cut -d/ -f2 | sort -u | head -40"}')"
+    run 2 "substitution in double quotes" "$(p Bash "$(jq -nc --arg c 'git log "$(id)"' '{command:$c}')")"
+    run 2 "backtick in double quotes" "$(p Bash "$(jq -nc --arg c 'git log "`id`"' '{command:$c}')")"
+    run 2 "unterminated quote" "$(p Bash "$(jq -nc --arg c 'git log "a | sh' '{command:$c}')")"
+    run 2 "real pipe into sh" "$(p Bash '{"command":"git log | grep \"x\" | sh"}')"
+    run 2 "quoted then redirect" "$(p Bash "$(jq -nc --arg c 'git log "(x)" > out.txt' '{command:$c}')")"
     ;;
   no-marker)
     rm -f "$tmp/claudio-orch-s1"

@@ -1,0 +1,1 @@
+{"name": "orchestrator-guard: metacharacters inside quotes are text; cut is a filter", "kind": "hook", "script": "evals/scripts/orchestrator-guard-test.sh", "args": ["{root}/hooks", "quoted-meta"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA VIS-EST-001, grep -E \"(a|b)\" and cut blocked (claudio-3-6-3)"}

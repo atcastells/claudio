@@ -31,6 +31,14 @@ launch() { # launch <prompt> [agent_id]
     '{hook_event_name:"PreToolUse", session_id:"s1", cwd:$cwd, tool_name:"Agent", tool_input:{subagent_type:"integrator", prompt:$p}}
      + (if $a == "" then {} else {agent_id:$a} end)' | bash "$hooks/task-actuals.sh" >/dev/null 2>&1
 }
+stopas() { # stopas <agent> <task> <report>
+  local t="$tmp/tr-$2.jsonl"
+  printf '%s\n' "{\"type\":\"user\",\"timestamp\":\"2026-11-19T10:00:00Z\",\"message\":{\"content\":\"[sdlc:demo/$2 est=5m/500k] do it\"}}" \
+    "{\"type\":\"assistant\",\"timestamp\":\"2026-11-19T10:03:00Z\",\"message\":{\"id\":\"m1\",\"model\":\"claude-sonnet-5-5\",\"usage\":{\"input_tokens\":1000}}}" > "$t"
+  jq -nc --arg cwd "$repo" --arg t "$t" --arg m "$3" --arg a "$1" \
+    '{hook_event_name:"SubagentStop", session_id:"s1", cwd:$cwd, agent_type:$a, agent_id:("id-" + $a),
+      agent_transcript_path:$t, last_assistant_message:$m}' | bash "$hooks/task-actuals.sh" >/dev/null 2>&1
+}
 stop() { # stop <task> <result>
   local t="$tmp/tr-$1.jsonl"
   printf '%s\n' "{\"type\":\"user\",\"timestamp\":\"2026-11-19T10:00:00Z\",\"message\":{\"content\":\"[sdlc:demo/$1 est=5m/500k] do it\"}}" \
@@ -65,6 +73,19 @@ launch '[sdlc:demo/T10 est=5m/500k] go'; stop T10 blocked
 stop T10 needs-decision
 [ "$(row T10)" = needs-decision ] || fail "needs-decision: T10 is '$(row T10)'"
 [ "$(sed -n 1p "$c/plan.md")" = "# Plan: demo" ] || fail "plan header changed"
+
+plan "APPROVED BY ENGINEER"
+cat >> "$c/plan.md" <<P
+| T13 | verify | — | verifier | 5m/500k | in progress |
+| T14 | review | — | reviewer | 5m/500k | in progress |
+| T15 | review | — | reviewer | 5m/500k | in progress |
+P
+stopas reviewer T14 $'## Findings\n[IMPORTANT] x demonstration: y'
+[ "$(row T14)" = done ] || fail "reviewer without RESULT: T14 is '$(row T14)'"
+stopas verifier T13 $'Verdict\nRESULT: blocked'
+[ "$(row T13)" = blocked ] || fail "verifier blocked: T13 is '$(row T13)'"
+stopas reviewer T15a $'RESULT: done'
+[ "$(row T15)" = "in progress" ] || fail "nested T15a closed T15"
 
 rm -f "$tmp/claudio-orch-s1"; plan "APPROVED"
 launch '[sdlc:demo/T1 est=5m/500k] go'

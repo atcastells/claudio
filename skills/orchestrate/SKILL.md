@@ -20,9 +20,9 @@ approved plan. What changes is who does the work. The `mode` hook records
 - **Active chain**: the chain may live in another repo than the session;
   `/orchestrate <dir>/.sdlc/<slug>` or the first write to it records it.
 - **integrator** (Opus 5.5): integrates, edits unclear code, launches
-  `implementer`, `verifier`, `reviewer` and `scout`; only its artifact
-  reaches you. Plan task IDs carry no letter: `T3a`, `T3b` are its nested
-  agents, and their cost is added to `T3`.
+  `implementer`, `verifier`, `reviewer` and `scout`; you launch only it and
+  `scout`, review rows too. Only its artifact reaches you.
+  Plan task IDs carry no letter: `T3a`, `T3b` are nested, cost added to `T3`.
 
 ## Delegating
 
@@ -45,7 +45,8 @@ and code with `limit` 40 at most. Open one cited file:line per artifact, and
 every citation of a `blocked` or `needs-decision` one. `needs-decision` is
 the integrator handing you a question it must not settle (`integrator.md`,
 *Escalate*): decide it yourself, or ask the developer when it changes the
-goal; never send it back unanswered. `cost` is measured by a hook.
+goal; never send it back unanswered: continue that integrator with
+`SendMessage` and your decision, so the hook closes the row.
 
 ## Persist or discard
 
@@ -69,8 +70,7 @@ of getting it again (`regen`, `cost`; expensive = over $0.50 or 10 minutes):
 raw-output is never persisted: keep its `regen` instead. Persisting means
 condensing, not copying; the shape of the data, never values.
 
-On compact or resume, `plan-resume` lists delegated tasks with no artifact
-back: relaunch each with its tag and brief (absolute paths across repos).
+On compact or resume, relaunch each task `plan-resume` lists, same brief.
 
 ## Closing
 

@@ -9,16 +9,17 @@
 #     chain written becomes the session's active chain (lib/chain.sh);
 #   - read-only git (status, diff, log, blame, show, ls-files, ls-tree,
 #     rev-parse, merge-base, cat-file -p/-t/-s/-e, branch in list form), also as git -C <dir>; several of them
-#     joined by ; && || and piped into head, tail, wc, sort, uniq or grep;
+#     joined by ; && || and piped into head, tail, wc, cut, sort, uniq or grep
+#     (metacharacters inside quotes, as in grep -E "(a|b)", are text);
 #   - git add, commit and push, alone, always answered with permissionDecision "ask";
 #   - calibrate.sh and the orchestrate clean.sh, alone;
 #   no substitution, redirection, subshell or background.
-#   - Agent: a plan row (T1 and up, no letter) is not delegated while the
+#   - Agent: only integrator and scout; a plan row (T1 and up, no letter) is not delegated while the
 #     chain's plan.md is still a draft; T0, pre-plan inspection, passes.
 #   - Read: an integrator artifact (.sdlc/<slug>/work/*.md but its *-brief.md),
 #     review/ output and any file outside .sdlc/ only with limit <= 40 (the
 #     frontmatter and summary, or one cited file:line); the rest of the chain,
-#     briefs and ~/.claude are read freely.
+#     briefs, images and ~/.claude are read freely.
 # Agents (agent_id set): git add/commit/push are blocked; an Edit/Write of a file
 # another agent of the active chain edited in the last hour gets a warning
 # (stdout JSON, exit 0): re-read it first.
@@ -81,12 +82,39 @@ filter_ok() {
   local w1 rest w
   read -r w1 rest <<< "$1"
   case "$w1" in
-    head|tail|wc|grep) return 0 ;;
+    head|tail|wc|grep|cut) return 0 ;;
     sort|uniq)
       for w in $rest; do case "$w" in -o|-o*|--output*) return 1 ;; -*) ;; *) return 1 ;; esac; done
       return 0 ;;
     *) return 1 ;;
   esac
+}
+
+# mask <cmd>: the command with shell metacharacters that sit inside quotes (or
+# after a backslash) replaced by _, so "(a|b)" in a grep pattern is not taken
+# for a pipe or a subshell. $ and ` stay inside double quotes (they expand
+# there). An unterminated quote leaves a ( so the command is blocked.
+mask() {
+  printf '%s' "$1" | awk -v q="'" -v dq='"' -v bs='\\' 'BEGIN { RS = "\001" } {
+    s = $0; o = ""; st = 0; n = length(s)
+    for (i = 1; i <= n; i++) {
+      c = substr(s, i, 1)
+      if (st == 0) {
+        if (c == bs) { o = o "__"; i++; continue }
+        if (c == q) { st = 1 } else if (c == dq) { st = 2 }
+        o = o c; continue
+      }
+      if (st == 1) {
+        if (c == q) { st = 0; o = o c; continue }
+        o = o (index("|;&()<>$`", c) ? "_" : c); continue
+      }
+      if (c == bs) { d = substr(s, i + 1, 1); o = o "_" (index("|;&()<>", d) || d == dq || d == bs ? "_" : d); i++; continue }
+      if (c == dq) { st = 0; o = o c; continue }
+      o = o (index("|;&()<>", c) ? "_" : c)
+    }
+    if (st) o = o "("
+    printf "%s", o
+  }'
 }
 
 # read_chain <cmd>: 0 when every command joined by ; && || is a git read,
@@ -154,6 +182,8 @@ case "$tool" in
     [ -n "$f" ] || exit 0
     case "$f" in /*) ;; *) [ -n "$cwd" ] && f="${cwd%/}/$f" || exit 0 ;; esac
     case "$f" in "$HOME"/.claude/*) exit 0 ;; esac
+    # Screenshots and other images: the developer asks to see them
+    case "$(printf '%s' "$f" | tr '[:upper:]' '[:lower:]')" in *.png|*.jpg|*.jpeg|*.gif|*.webp|*.bmp) exit 0 ;; esac
     case "$f" in
       */.sdlc/*/work/*-brief.md) exit 0 ;;
       */.sdlc/*/work/*|*/.sdlc/*/review/*) what="an integrator artifact or review output whole" ;;
@@ -166,6 +196,13 @@ Read with limit 40 (the frontmatter and summary, or one cited file:line with off
     exit 2
     ;;
   Agent|Task)
+    st_=$(printf '%s' "$payload" | jq -r '.tool_input.subagent_type // ""' 2>/dev/null)
+    case "$st_" in
+      integrator|scout) ;;
+      *) printf '%s\n' "BLOCKED by orchestrator-guard: Orchestrate mode, the main session launches only the integrator (and scouts for a quick lookup), not '${st_:-general-purpose}'.
+Give the task to the integrator: it launches implementer, verifier and reviewer as nested T<n>a, T<n>b and writes their findings to review/." >&2
+        exit 2 ;;
+    esac
     tag=$(printf '%s' "$payload" | jq -r '.tool_input.prompt // ""' 2>/dev/null \
       | sed -nE '1,3s/.*\[sdlc:([a-z0-9-]+)\/(T[0-9]+) est=[^]]*\].*/\1 \2/p' | head -n 1)
     [ -n "$tag" ] || exit 0
@@ -205,12 +242,13 @@ Read with limit 40 (the frontmatter and summary, or one cited file:line with off
     ;;
   Bash)
     # A $ that closes a quoted regex ("\.png$") or stands alone expands nothing
-    bare=$(printf '%s' "$cmd" | sed -E 's/\$(["'"'"' |]|$)/\1/g')
+    mcmd=$(mask "$cmd")
+    bare=$(printf '%s' "$mcmd" | sed -E 's/\$(["'"'"' |]|$)/\1/g')
     case "$bare" in *[\`\$\>\<\(\)]*|*$'\n'*) block "run commands (only plain git and the orchestrate scripts)" ;; esac
-    case "$cmd" in
+    case "$mcmd" in
       *[\;\&\|]*)
-        read_chain "$cmd" && exit 0
-        block "run commands (only read-only git, chained or piped into head, tail, wc, sort, uniq or grep)" ;;
+        read_chain "$mcmd" && exit 0
+        block "run commands (only read-only git, chained or piped into head, tail, wc, cut, sort, uniq or grep)" ;;
     esac
     read -r w1 w2 rest <<< "$cmd"
     if [ "$w1" = bash ]; then

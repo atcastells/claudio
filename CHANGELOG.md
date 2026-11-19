@@ -5,6 +5,25 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.6.3 — 2026-11-19
+
+Fixes from the first session on 3.6.2 (ASTRA VIS-EST-001). Slug
+`.sdlc/claudio-3-6-3/`. `./install.sh` is enough.
+
+- **Images are read freely**: the main session's Read guard lets PNG, JPG,
+  GIF, WebP and BMP through whole, also under `review/shots/`; text under
+  `review/` and `work/` keeps the `limit` 40.
+- **Main launches only `integrator` and `scout`**: the guard blocks a
+  verifier, reviewer or untyped agent from the main session; review rows
+  go to the integrator, which writes their findings.
+- **Plan rows close for any agent**: at SubagentStop a plan row run by an
+  agent other than the integrator takes the report's `RESULT:` line, or
+  `done` when it has none. A `needs-decision` is answered by continuing the
+  integrator with `SendMessage`, so the row closes.
+- **Guard**: metacharacters inside quotes are text (`grep -E "(a|b)"`,
+  `grep 'x|y'`); `$` and backticks inside double quotes stay blocked, an
+  unterminated quote blocks. `cut` joins the allowed filters.
+
 ## 3.6.2 — 2026-11-19
 
 Orchestrate after the second ASTRA session on 3.6.0 (natural-volume-registry):
