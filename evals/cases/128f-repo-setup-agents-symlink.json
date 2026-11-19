@@ -1,0 +1,1 @@
+{"name": "repo-setup: AGENTS.md symlink next to each CLAUDE.md", "kind": "file_contains", "file": "{root}/skills/repo-setup/SKILL.md", "contains": "`ln -s CLAUDE.md AGENTS.md`", "origin": "Module CLAUDE.md rule asked by the developer, 2026-11-19 (claudio-3-8-0)"}

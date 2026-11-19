@@ -1,0 +1,1 @@
+{"name": "check.sh: nested CLAUDE.md over 30 lines and missing AGENTS.md symlinks warn", "kind": "hook", "script": "evals/scripts/module-claude-md-test.sh", "args": ["{root}/skills/repo-setup/check.sh"], "expect_exit": 0, "contains": "all passed", "origin": "Module CLAUDE.md rule asked by the developer, 2026-11-19 (claudio-3-8-0)"}

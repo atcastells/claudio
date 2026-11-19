@@ -116,6 +116,8 @@ demonstrate the failure; what you cannot demonstrate goes to "Unconfirmed".
 Human attention moves up a level: not every line, but whether the change does
 what the plan intended and whether the risk is acceptable.
 
+Update the module `CLAUDE.md` of each module the change touched (at most 30
+lines, `AGENTS.md` symlinked to it) before the PR.
 Git is reserved for the developer (see `CLAUDE.md`): prepare the PR, draft
 the description and the findings, but **you do not commit or push**. Run
 git in its own command, never chained: a chain with git is denied whole.

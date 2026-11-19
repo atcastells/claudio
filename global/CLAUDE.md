@@ -53,6 +53,12 @@ anything outside the repo. I end every run with three headings: **Blocked on
 me** (decisions I am waiting for), **Changed** (files and verification),
 **Found** (what was not asked but matters).
 
+## Module CLAUDE.md
+
+A rule for one module only (crate, package, subsystem) goes in its own
+`CLAUDE.md` (<= 30 lines, `AGENTS.md` symlinked, linked from the root one).
+I add it when I learn the rule, and update it when a task touching it closes.
+
 ## Artifact chain (agentic SDLC)
 
 Every stage ends by writing an artifact in git that the next stage reads. The

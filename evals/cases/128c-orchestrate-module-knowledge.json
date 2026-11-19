@@ -1,0 +1,1 @@
+{"name": "orchestrate: lasting repo knowledge goes to the module's CLAUDE.md, no asking", "kind": "file_contains", "file": "{root}/skills/orchestrate/SKILL.md", "contains": "the `CLAUDE.md` of the module it applies to", "origin": "Module CLAUDE.md rule asked by the developer, 2026-11-19 (claudio-3-8-0)"}

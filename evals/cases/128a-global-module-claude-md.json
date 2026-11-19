@@ -1,0 +1,1 @@
+{"name": "global: module rules go in the module's own CLAUDE.md", "kind": "file_contains", "file": "{root}/CLAUDE.md", "file_repo": "{root}/global/CLAUDE.md", "contains": "## Module CLAUDE.md", "origin": "Module CLAUDE.md rule asked by the developer, 2026-11-19 (claudio-3-8-0)"}

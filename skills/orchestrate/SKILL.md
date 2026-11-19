@@ -62,7 +62,7 @@ of getting it again (`regen`, `cost`; expensive = over $0.50 or 10 minutes):
 | `data` | Destination when persisted |
 |---|---|
 | decision | `.sdlc/<slug>/decisions/NNN-<topic>.md` and one line in `context.md` |
-| repo-knowledge | `context.md`; the repo's `CLAUDE.md` if it outlives the slug (ask first; the integrator edits it) |
+| repo-knowledge | `context.md`; if it outlives the slug, the `CLAUDE.md` of the module it applies to (the root one only when repo-wide); the integrator edits it |
 | evidence | `.sdlc/<slug>/review/` |
 | measurement | `.sdlc/<slug>/` when it backs a decision; otherwise discarded |
 | exploration | one line in `context.md`, then discarded |

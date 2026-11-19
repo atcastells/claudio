@@ -52,6 +52,8 @@ scripts that do not exist. Applied as is.
 - `.claude/settings.json` → `templates/settings.json`. If it exists, **merge**
   the git `deny` rules instead of replacing: the repo may have its own.
 - `REVIEW.md` → `~/.claude/skills/sdlc/templates/REVIEW.md`.
+- `AGENTS.md` next to each `CLAUDE.md`, the root and every module one:
+  `ln -s CLAUDE.md AGENTS.md`, so other agents read the same rules.
 - `.sdlc/README.md` → `templates/sdlc-README.md`.
 - New `CLAUDE.md` → `templates/CLAUDE.md`, **with the real commands already
   filled in** from `package.json` / `Makefile` / `composer.json`. A skeleton

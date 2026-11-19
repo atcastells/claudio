@@ -5,6 +5,24 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.8.0 — 2026-11-19
+
+Module CLAUDE.md files, asked by the developer. Slug `.sdlc/claudio-3-8-0/`.
+`./install.sh` is enough; `/repo-setup` audits now warn about what is missing.
+
+- **Global rule**: a rule for one module only goes in that module's own
+  `CLAUDE.md` (at most 30 lines, `AGENTS.md` symlinked to it, linked from the
+  root one); it is written when the rule is learned and updated when a task
+  touching the module closes. Core budget 75 -> 81 lines, installed 110 -> 116.
+- **orchestrate**: lasting repo knowledge goes to the `CLAUDE.md` of the module
+  it applies to (the root one only when repo-wide), edited by the integrator
+  without asking first.
+- **sdlc**: before the PR, update the module `CLAUDE.md` of each module the
+  change touched (skill budget 160 -> 162).
+- **repo-setup**: `check.sh` warns about module `CLAUDE.md` files over 30 lines
+  and about a missing or non-symlink `AGENTS.md` next to each `CLAUDE.md`;
+  the skill creates them with `ln -s CLAUDE.md AGENTS.md`.
+
 ## 3.7.0 — 2026-11-19
 
 From the profile of the ASTRA sessions (13-19 Nov). Slug `.sdlc/claudio-3-7-0/`.

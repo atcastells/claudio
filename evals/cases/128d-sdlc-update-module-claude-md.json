@@ -1,0 +1,1 @@
+{"name": "sdlc: before the PR, update the module CLAUDE.md of touched modules", "kind": "file_contains", "file": "{root}/skills/sdlc/SKILL.md", "contains": "Update the module `CLAUDE.md` of each module the change touched", "origin": "Module CLAUDE.md rule asked by the developer, 2026-11-19 (claudio-3-8-0)"}

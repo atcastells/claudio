@@ -63,6 +63,28 @@ else
   ko "CLAUDE.md does not exist"
 fi
 
+# --- Module CLAUDE.md and AGENTS.md ---------------------------------------------
+# A module's own CLAUDE.md holds only its rules (<= 30 lines); each CLAUDE.md has
+# AGENTS.md as a symlink to it. Build output and dependencies are skipped.
+mods=0
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+  f="${f#./}"; d=$(dirname "$f")
+  if [ "$f" != CLAUDE.md ]; then
+    mods=$((mods+1))
+    m=$(wc -l < "$f" | tr -d ' ')
+    [ "$m" -le 30 ] || wn "module CLAUDE.md over 30 lines: $f ($m)"
+  fi
+  if [ -L "$d/AGENTS.md" ]; then
+    [ "$(readlink "$d/AGENTS.md")" = CLAUDE.md ] || wn "AGENTS.md is not a symlink to CLAUDE.md: $d/AGENTS.md"
+  elif [ -e "$d/AGENTS.md" ]; then
+    wn "AGENTS.md is not a symlink to CLAUDE.md: $d/AGENTS.md"
+  else
+    wn "no AGENTS.md symlink next to $f (ln -s CLAUDE.md AGENTS.md)"
+  fi
+done < <(find . \( -name .git -o -name node_modules -o -name target -o -name vendor -o -name .sdlc -o -name dist -o -name build -o -name .venv \) -prune -o -name CLAUDE.md -type f -print 2>/dev/null | sort)
+ok "module CLAUDE.md files: $mods"
+
 # --- Test command defined ------------------------------------------------------
 if [ -f package.json ] && jq -e '.scripts.test' package.json >/dev/null 2>&1; then ok "test command: npm test"
 elif [ -f Makefile ] && grep -qE '^test:' Makefile; then ok "test command: make test"
