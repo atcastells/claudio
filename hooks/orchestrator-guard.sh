@@ -7,8 +7,8 @@
 #     walking up, so a cd into .sdlc/ does not matter), or an existing chain of
 #     another repo (.sdlc/<slug>/ with intent, spec, plan or context.md). The
 #     chain written becomes the session's active chain (lib/chain.sh);
-#   - read-only git (status, diff, log, blame, show, ls-files, rev-parse,
-#     merge-base, branch in list form), also as git -C <dir>; several of them
+#   - read-only git (status, diff, log, blame, show, ls-files, ls-tree,
+#     rev-parse, merge-base, cat-file -p/-t/-s/-e, branch in list form), also as git -C <dir>; several of them
 #     joined by ; && || and piped into head, tail, wc, sort, uniq or grep;
 #   - git add, commit and push, alone, always answered with permissionDecision "ask";
 #   - calibrate.sh and the orchestrate clean.sh, alone;
@@ -53,7 +53,8 @@ git_read() {
   verb="${gw%% *}"; rest="${gw#* }"; [ "$rest" = "$gw" ] && rest=""
   case " $rest " in *" --ext-diff"*|*" --output"*|*" --textconv"*|*" -o "*) return 1 ;; esac
   case "$verb" in
-    status|diff|log|blame|show|ls-files|rev-parse|merge-base) return 0 ;;
+    status|diff|log|blame|show|ls-files|ls-tree|rev-parse|merge-base) return 0 ;;
+    cat-file) case " $rest " in *" -p "*|*" -t "*|*" -s "*|*" -e "*) return 0 ;; *) return 1 ;; esac ;;
     branch)
       # List form only: a bare name would create a branch
       for w in $rest; do
@@ -182,7 +183,9 @@ case "$tool" in
     exit 0
     ;;
   Bash)
-    case "$cmd" in *[\`\$\>\<\(\)]*|*$'\n'*) block "run commands (only plain git and the orchestrate scripts)" ;; esac
+    # A $ that closes a quoted regex ("\.png$") or stands alone expands nothing
+    bare=$(printf '%s' "$cmd" | sed -E 's/\$(["'"'"' |]|$)/\1/g')
+    case "$bare" in *[\`\$\>\<\(\)]*|*$'\n'*) block "run commands (only plain git and the orchestrate scripts)" ;; esac
     case "$cmd" in
       *[\;\&\|]*)
         read_chain "$cmd" && exit 0
@@ -198,7 +201,7 @@ case "$tool" in
     gw=$(git_words "$cmd") || block "run commands, explore or run tests"
     verb="${gw%% *}"
     case "$verb" in
-      status|diff|log|blame|show|ls-files|rev-parse|merge-base|branch)
+      status|diff|log|blame|show|ls-files|ls-tree|rev-parse|merge-base|cat-file|branch)
         git_read "$cmd" && exit 0
         block "run git $verb in that form (read-only git only; git branch only lists)" ;;
       add|commit|push)

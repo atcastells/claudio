@@ -1,1 +1,1 @@
-{"name": "orchestrate: prior chains and design docs are read in T0, not by main", "kind": "file_contains", "file": "{root}/skills/orchestrate/SKILL.md", "contains": "Prior chains and design docs are read in `T0`", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}
+{"name": "orchestrate: prior chains and design docs are read in T0, not by main", "kind": "file_contains", "file": "{root}/skills/orchestrate/SKILL.md", "contains": "Prior chains, design docs and code are read in `T0`", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

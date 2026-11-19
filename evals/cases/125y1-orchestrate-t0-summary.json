@@ -1,0 +1,1 @@
+{"name": "orchestrate: main drafts the spec from the T0 summary", "kind": "file_contains", "file": "{root}/skills/orchestrate/SKILL.md", "contains": "you draft from it (a gap is a follow-up `T0`, not a read)", "origin": "ASTRA AST-ESP-002 session 2026-11-19 (claudio-3-6-1)"}

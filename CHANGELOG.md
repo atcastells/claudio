@@ -5,6 +5,32 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.6.1 — 2026-11-19
+
+Fixes from the first sessions on 3.6.0 (ASTRA AST-ESP-002 in Orchestrate,
+EIC front in Spec mode). Slug `.sdlc/claudio-3-6-1/`. `./install.sh` is
+enough.
+
+- **Haiku 5.5 has a price** in `task-actuals` ($0.10 / $0.50, cache read
+  $0.01 per M): scout rows, and the integrator's `cost` that adds them, no
+  longer come out as `usd_min: null`.
+- **Main rows when the plan is edited from Bash**: `task-actuals` also runs
+  on PostToolUse Bash and measures the plan's main rows when the command
+  names `.sdlc/<slug>/plan.md`, or names `plan.md` from inside the chain
+  (a `python3` or `sed -i` edit of the Status). Before, those tasks had no
+  row or a 0-minute one.
+- **Estimates from data in every mode**: `calibrate.sh` ends with one
+  `est=` line per runner, from the median actual it says to use; the
+  starting table is no longer what gets copied into tags.
+- **Guard**: `git ls-tree` and `git cat-file -p/-t/-s/-e` are read-only
+  git; a `$` that closes a quoted regex (`grep -e "\.png$"`) or stands
+  alone no longer blocks a read chain. `$VAR`, `${...}` and `$(...)` stay
+  blocked.
+- **T0 for a spec**: the integrator returns every fact the spec needs as a
+  line with its file:line, grouped by the spec's sections; the main session
+  drafts from that summary and asks a follow-up `T0` for a gap instead of
+  reading the sources.
+
 ## 3.6.0 — 2026-11-19
 
 Orchestrate mode after its first session with Fable 5.2 as the main

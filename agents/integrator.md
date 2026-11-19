@@ -49,6 +49,14 @@ the requirement in `spec.md`, the repo's `CLAUDE.md`. Do not edit
    Read it again right before each edit; `orchestrator-guard` warns you when
    another agent edited it in the last hour.
 
+## T0 for a spec
+
+The main session drafts the spec from your summary and does not open the
+sources. Shape it for that: every fact the spec needs (formats, invariants,
+interfaces, numbers, constraints) as one line with its file:line, grouped by
+the spec's sections, and the open questions last. Up to 40 lines here; the
+rest of the artifact is for checking.
+
 ## Escalate
 
 Stop as `result: needs-decision` (kind `decision-request`: options, what

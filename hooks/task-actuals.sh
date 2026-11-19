@@ -9,7 +9,8 @@
 #     The directory is the one of the repo holding cwd, else the session's active
 #     chain (lib/chain.sh) when its name is <slug>: in Orchestrate mode the chain
 #     may live in another repo. The machine-level log gets the line either way.
-#   PostToolUse: after an Edit/Write of .sdlc/<slug>/plan.md, measures the rows
+#   PostToolUse: after an Edit/Write of .sdlc/<slug>/plan.md (or a Bash command
+#     that names it, e.g. a python3 or sed edit of its Status), measures the rows
 #     whose "Runs on" is main: "in progress" appends a start line, "done" appends
 #     the closing line (same schema) with minutes and tokens from the main
 #     transcript between both timestamps. Other runners are ignored.
@@ -101,7 +102,7 @@ subagent_stop() {
     # usd_min: a floor, output tokens are not in transcripts. $/M tokens
     # (input, output, cache read); cache writes at 1.25x input; unknown model = null
     | {"claude-fable-5-2": [8, 40, 0.2], "claude-opus-5-5": [4, 20, 0.2],
-       "claude-sonnet-5-5": [2, 10, 0.1]} as $price
+       "claude-sonnet-5-5": [2, 10, 0.1], "claude-haiku-5-5": [0.1, 0.5, 0.01]} as $price
     | ([$msgs[] | ($price[.message.model? // ""]) as $p
         | if $p == null then null else .message.usage
           | ((.input_tokens // 0) * $p[0] + (.output_tokens // 0) * $p[1]
@@ -173,7 +174,25 @@ post_tool_use() {
   tool=$(printf '%s' "$payload" | jq -r '.tool_name // empty' 2>/dev/null)
   fpath=$(printf '%s' "$payload" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
   tpath=$(printf '%s' "$payload" | jq -r '.transcript_path // empty' 2>/dev/null)
-  case "$tool" in Edit|Write|MultiEdit) ;; *) return 0 ;; esac
+  case "$tool" in
+    Edit|Write|MultiEdit) ;;
+    Bash)
+      # The plan's Status edited from a script (python3, sed -i...): the plan
+      # is named in the command, or the command runs in the chain and names
+      # plan.md. Same measuring path as an Edit.
+      local bcmd chain
+      bcmd=$(printf '%s' "$payload" | jq -r '.tool_input.command // empty' 2>/dev/null)
+      printf '%s' "$bcmd" | grep -q 'plan\.md' || return 0
+      fpath=$(printf '%s' "$bcmd" | grep -oE '[^[:space:]"'"'"';|&]*\.sdlc/[a-z0-9-]+/plan\.md' | head -n 1)
+      if [ -z "$fpath" ]; then
+        chain=$(printf '%s' "$bcmd" | grep -oE '[^[:space:]"'"'"';|&]*\.sdlc/[a-z0-9-]+' | head -n 1)
+        [ -n "$chain" ] || case "$cwd" in */.sdlc/*) chain=$(printf '%s' "$cwd" | sed -nE 's#^(.*/\.sdlc/[a-z0-9-]+).*$#\1#p') ;; esac
+        [ -n "$chain" ] || return 0
+        fpath="$chain/plan.md"
+      fi
+      ;;
+    *) return 0 ;;
+  esac
   [ -n "$fpath" ] || return 0
   case "$fpath" in /*) ;; *) [ -n "$cwd" ] && fpath="$cwd/$fpath" || return 0 ;; esac
   printf '%s' "$fpath" | grep -Eq '/\.sdlc/[a-z0-9-]+/plan\.md$' || return 0
@@ -233,7 +252,7 @@ post_tool_use() {
             + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)] | add // 0) as $tok
         # usd_min: same price table and floor as subagent_stop
         | {"claude-fable-5-2": [8, 40, 0.2], "claude-opus-5-5": [4, 20, 0.2],
-           "claude-sonnet-5-5": [2, 10, 0.1]} as $price
+           "claude-sonnet-5-5": [2, 10, 0.1], "claude-haiku-5-5": [0.1, 0.5, 0.01]} as $price
         | ([$msgs[] | ($price[.message.model? // ""]) as $p
             | if $p == null then null else .message.usage
               | ((.input_tokens // 0) * $p[0] + (.output_tokens // 0) * $p[1]

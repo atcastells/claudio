@@ -67,7 +67,13 @@ jq -n -r --slurpfile r "$tmp/repo" --slurpfile a "$tmp/all" '
       | "\($k)  repo \(side($repo; $k))  all \(side($all; $k))  use: \((of($repo; $k) | length) as $r | (of($all; $k) | length) as $a
         | if $r >= 5 or ($a == 0 and $r > 0) then "repo" else "all" end)",
        "  median actual: repo \(actual($repo; $k))  all \(actual($all; $k))"),
-    "Estimate with the median actual of the side marked \"use\"; the factors only compare with the starting table each task was estimated with.",
+    "Estimate with the median actual of the side marked \"use\", not the starting table; the factors only compare with the starting table each task was estimated with.",
+    "Tags (est= from that median):",
+    ($runners[] as $k
+      | (of($repo; $k) | length) as $r | (of($all; $k) | length) as $a
+      | (if $r >= 5 or ($a == 0 and $r > 0) then of($repo; $k) else of($all; $k) end) as $x
+      | select(($x | length) > 0)
+      | "  \($k): est=\([$x[] | .min] | median | if . < 0.5 then 0.5 else . end | r1)m/\([$x[] | .ktok] | median | round)k"),
     (if ($repo | map(select(.flag == true)) | length) > 0 then
        "Flagged (|deviation| > 50 %):",
        ($repo[] | select(.flag == true)

@@ -31,9 +31,9 @@ approved plan. What changes is who does the work. The `mode` hook records
 One prompt per task: `[sdlc:<slug>/T<n> est=<min>m/<ktok>k]`, then the path
 of a `brief` when it needs more than its plan row. Only `T0` (inspection
 for the spec) runs before the plan is approved: the guard blocks `T1`+ while
-`plan.md` says draft. Prior chains and design docs are read in `T0`, not by
-you: read `context.md`, handoff summaries, artifacts. Group small changes
-(each task is a cold start); launch a wave in one message.
+`plan.md` says draft. Prior chains, design docs and code are read in `T0`,
+not by you: its summary carries what the spec needs, each fact with its
+file:line, and you draft from it (a gap is a follow-up `T0`, not a read).
 
 ## Reading an artifact
 

@@ -1,0 +1,1 @@
+{"name": "integrator: T0 for a spec returns facts with file:line", "kind": "file_contains", "file": "{root}/agents/integrator.md", "contains": "## T0 for a spec", "origin": "ASTRA AST-ESP-002 session 2026-11-19 (claudio-3-6-1)"}

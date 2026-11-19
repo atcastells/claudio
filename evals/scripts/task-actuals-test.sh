@@ -118,6 +118,37 @@ jq -n --arg cwd "$ws" --arg t "$ws/transcript.jsonl" --arg f "$pf" \
 tail -n 1 "$lg" | jq -e '.runs_on=="main" and .model=="claude-fable-5-2" and (.usd_min | type) == "number" and .usd_min > 0' >/dev/null \
   || fail i2 "Fable main row without usd_min: $(tail -n 1 "$lg" 2>/dev/null)"
 
+sv_ws=$ws; sv_pf=$pf; sv_lg=$lg
+# i3. the plan's Status edited from Bash (python3 in the chain dir, then a command naming the plan)
+bpost() { # bpost <ws> <cwd> <command> <now>
+  jq -n --arg cwd "$2" --arg t "$1/transcript.jsonl" --arg c "$3" \
+    '{hook_event_name:"PostToolUse", cwd:$cwd, tool_name:"Bash", tool_input:{command:$c}, transcript_path:$t}' \
+    | TASK_ACTUALS_NOW="$4" bash "$hook" >/dev/null 2>&1
+}
+ws="$tmp/i3"; mkdir -p "$ws/.sdlc/demo"; pf="$ws/.sdlc/demo/plan.md"; lg="$ws/.sdlc/demo/actuals.jsonl"
+cp "$mx/main-transcript.jsonl" "$ws/transcript.jsonl"; cp "$mx/plan-progress.md" "$pf"
+bpost "$ws" "$ws" "cd $ws/.sdlc/demo && python3 - <<'EOF'
+p='plan.md'; s=open(p).read()
+EOF" "$T0"
+[ "$(lines "$lg")" = 1 ] && jq -e '.task=="T2" and .event=="start"' "$lg" >/dev/null || fail i3 "Bash edit in the chain: no start line: $(cat "$lg" 2>/dev/null)"
+cp "$mx/plan-done.md" "$pf"
+bpost "$ws" "$ws" "sed -i '' 's/in progress/done/' .sdlc/demo/plan.md" "$T1"
+[ "$(lines "$lg")" = 2 ] && tail -n 1 "$lg" | jq -e '.task=="T2" and .runs_on=="main" and .min==6' >/dev/null \
+  || fail i3 "Bash edit naming the plan: no closing line: $(cat "$lg" 2>/dev/null)"
+bpost "$ws" "$ws" "cargo test" "$T1"
+[ "$(lines "$lg")" = 2 ] || fail i3 "unrelated Bash command wrote a line"
+
+# i4. Haiku has a price: a scout row gets usd_min
+ws="$tmp/i4"; mkdir -p "$ws/.sdlc/demo"
+sed 's/"model":"[^"]*"/"model":"claude-haiku-5-5"/g' "$fx/tagged.jsonl" > "$ws/transcript.jsonl"
+jq -n --arg cwd "$ws" --arg t "$ws/transcript.jsonl" \
+  '{hook_event_name:"SubagentStop", cwd:$cwd, agent_type:"scout", agent_id:"agent-h", agent_transcript_path:$t, last_assistant_message:""}' \
+  | bash "$hook" >/dev/null 2>&1
+jq -e '.model=="claude-haiku-5-5" and (.usd_min|type)=="number"' "$ws/.sdlc/demo/actuals.jsonl" >/dev/null 2>&1 \
+  || fail i4 "Haiku scout without usd_min: $(cat "$ws/.sdlc/demo/actuals.jsonl" 2>/dev/null)"
+
+ws=$sv_ws; pf=$sv_pf; lg=$sv_lg
+
 # j. second edit with the row still done
 cp "$mx/plan-done.md" "$pf"
 jq -n --arg cwd "$ws" --arg t "$ws/transcript.jsonl" --arg f "$pf" \
