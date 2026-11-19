@@ -1,0 +1,1 @@
+{"name": "orchestrate: main decides needs-decision, never sends it back", "kind": "file_contains", "file": "{root}/skills/orchestrate/SKILL.md", "contains": "never send it back unanswered", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

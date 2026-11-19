@@ -1,0 +1,1 @@
+{"name":"task-actuals: cwd-in-sdlc","kind":"hook","script":"evals/scripts/actuals-cost-test.sh","args":["{root}/hooks","cwd-in-sdlc"],"expect_exit":0,"contains":"all passed"}

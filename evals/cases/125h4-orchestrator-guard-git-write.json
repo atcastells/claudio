@@ -1,0 +1,1 @@
+{"name":"orchestrator-guard: git-write","kind":"hook","script":"evals/scripts/orchestrator-guard-test.sh","args":["{root}/hooks","git-write"],"expect_exit":0,"contains":"all passed"}

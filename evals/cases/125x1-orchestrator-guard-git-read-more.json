@@ -1,0 +1,1 @@
+{"name": "orchestrator-guard: more read-only git (branch list form, ls-files, rev-parse, merge-base)", "kind": "hook", "script": "evals/scripts/orchestrator-guard-test.sh", "args": ["{root}/hooks", "git-read-more"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

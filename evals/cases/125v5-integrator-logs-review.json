@@ -1,0 +1,1 @@
+{"name":"integrator keeps logs in the chain review/, not /tmp","kind":"file_contains","file":"{root}/agents/integrator.md","contains":"tee .sdlc/<slug>/review/T<n>-<what>.log"}

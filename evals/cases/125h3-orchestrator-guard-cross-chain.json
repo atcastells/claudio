@@ -1,0 +1,1 @@
+{"name":"orchestrator-guard: cross-chain","kind":"hook","script":"evals/scripts/orchestrator-guard-test.sh","args":["{root}/hooks","cross-chain"],"expect_exit":0,"contains":"all passed"}

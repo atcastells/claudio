@@ -107,6 +107,17 @@ jq -n --arg cwd "$ws" --arg t "$ws/transcript.jsonl" --arg f "$pf" \
   and .cause=="spec was ambiguous" and .date=="2026-10-20" and (has("out_ktok")|not)' >/dev/null \
   || fail i "unexpected closing line: $(cat "$lg" 2>/dev/null)"
 
+# i2. a main row on a priced model (Fable) gets a numeric usd_min; unknown model stays null
+tail -n 1 "$lg" | jq -e 'has("usd_min") and .usd_min == null' >/dev/null || fail i2 "unknown model: usd_min not null"
+post i2 plan-progress.md "$T0"
+sed 's/"model-main"/"claude-fable-5-2"/' "$mx/main-transcript.jsonl" > "$ws/transcript.jsonl"
+cp "$mx/plan-done.md" "$pf"
+jq -n --arg cwd "$ws" --arg t "$ws/transcript.jsonl" --arg f "$pf" \
+  '{hook_event_name:"PostToolUse", cwd:$cwd, tool_name:"Edit", tool_input:{file_path:$f}, transcript_path:$t}' \
+  | TASK_ACTUALS_NOW="$T1" bash "$hook" >/dev/null 2>&1
+tail -n 1 "$lg" | jq -e '.runs_on=="main" and .model=="claude-fable-5-2" and (.usd_min | type) == "number" and .usd_min > 0' >/dev/null \
+  || fail i2 "Fable main row without usd_min: $(tail -n 1 "$lg" 2>/dev/null)"
+
 # j. second edit with the row still done
 cp "$mx/plan-done.md" "$pf"
 jq -n --arg cwd "$ws" --arg t "$ws/transcript.jsonl" --arg f "$pf" \

@@ -1,0 +1,1 @@
+{"name":"task-actuals: cross-repo","kind":"hook","script":"evals/scripts/actuals-cost-test.sh","args":["{root}/hooks","cross-repo"],"expect_exit":0,"contains":"all passed"}

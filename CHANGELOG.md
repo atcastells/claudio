@@ -5,6 +5,80 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.6.0 — 2026-11-19
+
+Orchestrate mode after its first session with Fable 5.2 as the main
+session (3.5.0, chain and session in the same repo). Slug
+`.sdlc/claudio-3-5-1/`. No project files change: `./install.sh` is enough.
+
+- **Read-only git in the main session**: `orchestrator-guard` also allows
+  `ls-files`, `rev-parse`, `merge-base` and `git branch` in list form (a bare
+  name, `-d/-D/-m/-c` or upstream options stay blocked). Reads can be joined
+  with `;`, `&&`, `||` and piped into `head`, `tail`, `wc`, `sort`, `uniq` or
+  `grep`; substitution, redirection, subshells and `&` stay blocked, and
+  `git add/commit/push` must still run alone.
+- **No delegation on a draft plan**: the guard now also sees `Agent`; a plan
+  row tagged `T1` or later is blocked while `plan.md` says draft. `T0`, the
+  pre-plan inspection, passes.
+- **Plan-stage reading**: prior chains and design docs are read in `T0`, not
+  by the main session.
+- **Escalation**: `integrator.md` gains *Escalate*, the cases where it stops
+  as `needs-decision` instead of deciding (two readings of the spec, an
+  unranked trade-off, a fix outside Files or layer, two competing causes, a
+  disputed finding, security, data-loss or irreversibility risk). The main
+  session decides them and never sends them back unanswered.
+- **No advisor in the main session**: the mode notice and the skill say not
+  to call it (a server tool, hooks cannot block it) and to ask for
+  `/advisor off`.
+- **Nested estimates from data**: the integrator takes `est` from the
+  runner's median actual (brief or `calibrate.sh`). The old fixed 3m/400k
+  ran 3–5x above the real cost and flagged every row.
+- **`usd_min` on main rows** (`task-actuals`), with the same price table as
+  subagents: the main session is the most expensive model.
+- **test-guard**: removing an exact duplicate assertion passes; Rust
+  `assert_eq!`/`assert_ne!` (`assert*!(`) now count as assertions, which
+  they did not before.
+- **Review evidence**: `subagent-report-check` sends an integrator report
+  back when its artifact cites `review/findings.md` and the file is missing;
+  evidence left in a scratchpad is copied to `review/evidence/`.
+- **macOS**: the implementer uses `sed -i ''` or `perl -pi -e`, and a red
+  step that cannot run is retried another way, never skipped.
+
+## 3.5.0 — 2026-11-19
+
+Orchestrate mode, after its first real delivery (chain in one repo, session
+in another, main session on Opus 5.5). Slug `.sdlc/orchestrate-hardening/`.
+
+- **Active chain** (`hooks/lib/chain.sh`): the chain may live in another
+  repo. `/orchestrate <dir>/.sdlc/<slug>` or the first write to an existing
+  chain records it in the session marker. `orchestrator-guard` lets the main
+  session write it, and finds the repo's own `.sdlc/` above cwd, so a `cd`
+  into `.sdlc/` no longer blocks it.
+- **`task-actuals` across repos (fix)**: it looked for `.sdlc/<slug>/` only
+  under cwd, so a session in another repo dropped every record, the
+  machine log line and the artifact `cost`. It now uses the active chain,
+  and the machine log gets the line even when no chain is found.
+- **Git closes from the main session**: `git -C <dir>` read-only verbs, and
+  `git add/commit/push` answered with `permissionDecision: ask`. Global and
+  project settings move those three from `deny` to `ask` (migration
+  `3.5.0.md`). Agents stay blocked from git writes in the mode.
+- **Scoped deletes**: `skills/orchestrate/clean.sh` removes only inside
+  `.sdlc/<slug>/work/` and `$TMPDIR/claudio-*` scratch, allowed in settings;
+  `rm -r` stays denied.
+- **`/orchestrate allow-test <file>`**: the developer's approval reaches
+  `test-guard` for that file, for 30 minutes, for any agent of the session
+  (also through `bash-file-check`).
+- **Durable evidence**: the integrator keeps test logs in
+  `.sdlc/<slug>/review/` and writes `review/findings.md` for the reviewers.
+- **Resume**: `plan-resume` also runs on `resume`, reads the active chain
+  and lists delegated tasks with no artifact back, to relaunch them.
+- **Shared files**: the plan marks `(shared)` files of a wave;
+  `orchestrator-guard` warns an agent when another one edited the same file
+  in the last hour.
+- **Model**: the mode no longer assumes Fable 5.2; `/orchestrate` notes
+  when the main session already runs Opus, where the cost split does not
+  apply.
+
 ## 3.4.0 — 2026-11-18
 
 Orchestrate mode, opt-in: Fable 5.2 plans and decides, Opus 5.5 does the

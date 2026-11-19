@@ -80,6 +80,12 @@ if [ "$agent" = integrator ]; then
       for k in task kind result data regen evidence; do
         printf '%s\n' "$front" | grep -qE "^$k:[[:space:]]*[^[:space:]]" || problems+=("the artifact's frontmatter lacks '$k:'")
       done
+      # Review findings it cites must be on disk (reviewers cannot write them)
+      slug=$(printf '%s' "$apath" | cut -d/ -f2)
+      if { printf '%s\n' "$report"; cat "$cwd/$apath"; } 2>/dev/null | grep -qaF 'review/findings.md' \
+         && [ ! -f "$cwd/.sdlc/$slug/review/findings.md" ]; then
+        problems+=("the artifact cites review/findings.md but .sdlc/$slug/review/findings.md does not exist: write the reviewers' findings there (one section per pass, each with its demonstration)")
+      fi
     fi
   fi
 fi

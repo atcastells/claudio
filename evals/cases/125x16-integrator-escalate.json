@@ -1,0 +1,1 @@
+{"name": "integrator: escalation criteria to the main session", "kind": "file_contains", "file": "{root}/agents/integrator.md", "contains": "## Escalate", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

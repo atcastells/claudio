@@ -1,0 +1,1 @@
+{"name":"orchestrate skill: active chain across repos","kind":"file_contains","file":"{root}/skills/orchestrate/SKILL.md","contains":"the chain may live in another repo than the session"}

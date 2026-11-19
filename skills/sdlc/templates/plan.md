@@ -52,7 +52,8 @@ it is the only place `task-actuals` takes a main task's cause from.
 |------|---------------------|---------|-------------|
 | 1 | T1, T2 | 5m | check `git diff --stat` |
 
-Tasks in one wave have no pending dependency and disjoint Files. Launch a
+Tasks in one wave have no pending dependency and disjoint Files; when two
+must share a file, mark it `(shared)` in both Files cells. Launch a
 wave's subagents in one message; after each wave, check `git diff --stat`
 against the listed Files.
 

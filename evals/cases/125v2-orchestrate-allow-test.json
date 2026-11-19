@@ -1,0 +1,1 @@
+{"name":"orchestrate 3.5.0: allow-test","kind":"hook","script":"evals/scripts/orchestrate-chain-test.sh","args":["{root}/hooks","allow-test"],"expect_exit":0,"contains":"all passed"}

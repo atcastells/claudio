@@ -47,21 +47,21 @@ changed_files() {
   return 0
 }
 
-# guard_payload <toplevel> <file> <cwd> <tmpdir>: prints a PreToolUse-shaped
+# guard_payload <toplevel> <file> <cwd> <tmpdir> [session_id]: prints a PreToolUse-shaped
 # Edit payload (tracked file: added and removed lines) or Write payload
 # (untracked file: whole content) for the file guards.
 guard_payload() {
-  local top="$1" f="$2" cwd="$3" tmp="$4" rel
+  local top="$1" f="$2" cwd="$3" tmp="$4" sid="${5:-}" rel
   rel="${f#"$top"/}"
   if git_safe "$top" cat-file -e "HEAD:$rel" 2>/dev/null; then
     git_safe "$top" cat-file blob "HEAD:$rel" >"$tmp/head" 2>/dev/null
     diff -a "$tmp/head" "$f" 2>/dev/null | grep -a '^< ' | sed 's/^< //' >"$tmp/old"
     diff -a "$tmp/head" "$f" 2>/dev/null | grep -a '^> ' | sed 's/^> //' >"$tmp/new"
-    jq -n --arg p "$f" --arg cwd "$cwd" --rawfile o "$tmp/old" --rawfile n "$tmp/new" \
-      '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:$cwd,tool_input:{file_path:$p,old_string:$o,new_string:$n}}'
+    jq -n --arg p "$f" --arg cwd "$cwd" --arg sid "$sid" --rawfile o "$tmp/old" --rawfile n "$tmp/new" \
+      '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:$cwd,session_id:$sid,tool_input:{file_path:$p,old_string:$o,new_string:$n}}'
   else
-    jq -n --arg p "$f" --arg cwd "$cwd" --rawfile c "$f" \
-      '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:$cwd,tool_input:{file_path:$p,content:$c}}'
+    jq -n --arg p "$f" --arg cwd "$cwd" --arg sid "$sid" --rawfile c "$f" \
+      '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:$cwd,session_id:$sid,tool_input:{file_path:$p,content:$c}}'
   fi
 }
 
@@ -99,7 +99,7 @@ check_changed() {
     rel="${f#"$top"/}"; rel="${rel//[[:cntrl:]]/?}"
     for g in credential-guard test-guard; do
       [ -f "$here/$g.sh" ] || continue
-      err=$(guard_payload "$top" "$f" "$cwd" "$tmp" | bash "$here/$g.sh" 2>&1 >/dev/null)
+      err=$(guard_payload "$top" "$f" "$cwd" "$tmp" "$(printf '%s' "$payload" | jq -r '.session_id // ""' 2>/dev/null)" | bash "$here/$g.sh" 2>&1 >/dev/null)
       rc=$?
       if [ "$rc" -eq 2 ]; then
         hit=1

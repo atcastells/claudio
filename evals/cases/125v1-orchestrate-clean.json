@@ -1,0 +1,1 @@
+{"name":"orchestrate clean.sh: deletes only work/ and claudio-* scratch","kind":"hook","script":"evals/scripts/orchestrate-clean-test.sh","args":["{root}/skills/orchestrate/clean.sh"],"expect_exit":0,"contains":"all passed"}

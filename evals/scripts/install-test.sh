@@ -25,7 +25,7 @@ check "profile CLAUDE.md == core + profile" "cmp -s <(cat '$src/global/CLAUDE.md
 check "profile.env installed" "cmp -s '$fx/profile.env' '$h/.claude/workflow/profile.env'"
 check "profile evals copied as p-*" "[ -f '$h/.claude/evals/cases/p-acme-rule.json' ]"
 check "profile deny merged into settings" "jq -e '.permissions.deny | index(\"Bash(acme-deploy *)\")' '$h/.claude/settings.json' >/dev/null"
-check "core deny kept alongside profile deny" "jq -e '.permissions.deny | index(\"Bash(git push *)\")' '$h/.claude/settings.json' >/dev/null"
+check "core deny kept alongside profile deny" "jq -e '.permissions.deny | index(\"Bash(git reset *)\")' '$h/.claude/settings.json' >/dev/null"
 check "profile path remembered" "[ \"\$(cat '$h/.claude/workflow/profile')\" = '$fx' ]"
 check "denylist not installed" "[ ! -e '$h/.claude/workflow/denylist.txt' ]"
 

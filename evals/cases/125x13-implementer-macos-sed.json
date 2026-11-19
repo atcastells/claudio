@@ -1,0 +1,1 @@
+{"name": "implementer: BSD sed on macOS, red step never skipped", "kind": "file_contains", "file": "{root}/agents/implementer.md", "contains": "never skipped. On macOS `sed -i` needs", "origin": "ASTRA S1-T3 session 2026-11-19 (claudio-3-5-1)"}

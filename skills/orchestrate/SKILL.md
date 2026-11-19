@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Orchestrate mode for the session — the main session (Fable 5.2, chosen at session start) plans and decides, the integrator agent (Opus 5.5) does the work and launches the other agents, and they talk only through artifacts in .sdlc/<slug>/work/. /orchestrate turns it on, /orchestrate off turns it off. Only the user switches modes.
+description: Orchestrate mode for the session — the main session (ideally Fable 5.2, chosen at session start) plans and decides, the integrator agent (Opus 5.5) does the work and launches the other agents, and they talk only through artifacts in .sdlc/<slug>/work/. /orchestrate [<chain dir>] turns it on, /orchestrate off turns it off, /orchestrate allow-test <file> approves weakening one test. Only the user switches modes.
 disable-model-invocation: true
 ---
 
@@ -12,30 +12,37 @@ approved plan. What changes is who does the work. The `mode` hook records
 
 ## Roles
 
-- **Main session** (Fable 5.2): writes `plan.md` and `context.md`, delegates
-  each task to the `integrator`, reads the artifact it returns, decides what
-  to persist. It does not explore, edit or run tests: `orchestrator-guard`
-  blocks Edit, Write and Bash outside `.sdlc/<slug>/`, read-only git and
-  `calibrate.sh`.
+- **Main session** (Fable 5.2 chosen at start; on Opus the cost split does
+  not apply, the mode says so): writes the chain, delegates each task to the
+  `integrator`, reads its artifact, decides. It does not explore, edit code
+  or run tests: `orchestrator-guard` allows only the chain, read-only git
+  (also `git -C`, chained or piped into head/tail/grep/wc), `git add/commit/push`
+  (the developer confirms), `calibrate.sh` and `clean.sh`. No `advisor`: it
+  would advise Fable with Fable; if it is on, ask the developer for `/advisor off`.
+- **Active chain**: the chain may live in another repo than the session;
+  `/orchestrate <dir>/.sdlc/<slug>` or the first write to it records it.
 - **integrator** (Opus 5.5): integrates, edits unclear code, launches
-  `implementer`, `verifier`, `reviewer` and `scout`, and answers with one
-  artifact. Only its artifact reaches the main session.
-- In this mode plan task IDs carry no letter: `T3a`, `T3b` are the
-  integrator's nested agents, and their cost is added to `T3`.
+  `implementer`, `verifier`, `reviewer` and `scout`; only its artifact
+  reaches you. Plan task IDs carry no letter: `T3a`, `T3b` are its nested
+  agents, and their cost is added to `T3`.
 
 ## Delegating
 
 One prompt per task: `[sdlc:<slug>/T<n> est=<min>m/<ktok>k]`, then the path
-of a `brief` artifact when the task needs more than its plan row. Group
-small changes into one task: each delegation costs the integrator a cold
-start (context, plan, files). Launch a wave's tasks in one message.
+of a `brief` when it needs more than its plan row. Only `T0` (inspection
+for the spec) runs before the plan is approved: the guard blocks `T1`+ while
+`plan.md` says draft. Prior chains and design docs are read in `T0`, not by
+you: read `context.md`, handoff summaries, artifacts. Group small changes
+(each task is a cold start); launch a wave in one message.
 
 ## Reading an artifact
 
-Read the frontmatter and the summary, never the whole body by default. Open
-one cited file:line per artifact, and every citation of a `blocked` or
-`needs-decision` one, before acting on it. `cost` is measured by a hook;
-`data` and `regen` tell you what it is and whether it can be had again.
+Frontmatter and summary only. Open one cited file:line per artifact, and
+every citation of a `blocked` or `needs-decision` one. `needs-decision` is
+the integrator handing you a question it must not settle (`integrator.md`,
+*Escalate*): decide it yourself, or ask the developer when it changes the
+goal; never send it back unanswered. `cost` is measured by a hook; `data`
+and `regen` say what it is and whether it can be had again.
 
 ## Persist or discard
 
@@ -62,7 +69,12 @@ raw-output is never persisted: keep its `regen` instead. Persisting means
 condensing what is needed, not copying the file. Same data rule as
 `Learned:`: the shape of the data, never values.
 
+On compact or resume, `plan-resume` lists delegated tasks with no artifact
+back: relaunch each with its tag and brief (absolute paths across repos).
+
 ## Closing
 
-`.sdlc/<slug>/work/` is git-ignored. It is the resume point while Build is
-open; when Build closes, the last integrator task deletes what is left in it.
+`.sdlc/<slug>/work/` is git-ignored: the resume point while Build is open.
+When it closes, `bash ~/.claude/skills/orchestrate/clean.sh` empties it.
+Evidence stays in `review/`. Commit from the main session with
+`git commit -F .sdlc/<slug>/work/commit.txt` (no quotes or `$` in commands).

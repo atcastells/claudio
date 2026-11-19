@@ -6,6 +6,9 @@
 #   SubagentStop: reads the subagent transcript, finds the tag
 #     [sdlc:<slug>/<task> est=<min>m/<ktok>k] in the prompt and appends one JSON
 #     line to .sdlc/<slug>/actuals.jsonl (only if that directory already exists).
+#     The directory is the one of the repo holding cwd, else the session's active
+#     chain (lib/chain.sh) when its name is <slug>: in Orchestrate mode the chain
+#     may live in another repo. The machine-level log gets the line either way.
 #   PostToolUse: after an Edit/Write of .sdlc/<slug>/plan.md, measures the rows
 #     whose "Runs on" is main: "in progress" appends a start line, "done" appends
 #     the closing line (same schema) with minutes and tokens from the main
@@ -15,6 +18,8 @@
 
 . "$(dirname "$0")/lib/report.sh"
 . "$(dirname "$0")/lib/leak-patterns.sh"
+. "$(dirname "$0")/lib/mode.sh"
+. "$(dirname "$0")/lib/chain.sh"
 
 payload=$(cat)
 event=$(printf '%s' "$payload" | jq -r '.hook_event_name // empty' 2>/dev/null)
@@ -66,7 +71,7 @@ machine_append() {
 }
 
 subagent_stop() {
-  local cwd agent aid tpath report out slug logf line
+  local cwd agent aid tpath report out slug logf line sid chain
   cwd=$(printf '%s' "$payload" | jq -r '.cwd // empty' 2>/dev/null)
   aid=$(printf '%s' "$payload" | jq -r '.agent_id // empty' 2>/dev/null)
   agent=$(printf '%s' "$payload" | jq -r '.agent_type // empty' 2>/dev/null)
@@ -120,25 +125,28 @@ subagent_stop() {
   [ -n "$out" ] || return 0
 
   slug=$(printf '%s' "$out" | jq -r '.slug' 2>/dev/null)
-  [ -n "$slug" ] && [ -d "$cwd/.sdlc/$slug" ] || return 0
-  logf="$cwd/.sdlc/$slug/actuals.jsonl"
+  [ -n "$slug" ] || return 0
   line=$(printf '%s' "$out" | jq -c --arg id "$aid" '.rec + (if $id == "" then {} else {agent_id: $id} end)' 2>/dev/null) || return 0
   [ -n "$line" ] || return 0
+  sid=$(printf '%s' "$payload" | jq -r '.session_id // empty' 2>/dev/null)
+  chain=$(chain_dir "$cwd" "$slug" "$sid") || { machine_append "$line" "$cwd" "$aid"; return 0; }
+  logf="$chain/actuals.jsonl"
   append_log "$logf" "$line" "$aid"
-  machine_append "$line" "$cwd" "$aid"
-  [ "$agent" = integrator ] && stamp_cost "$cwd" "$slug" "$logf" "$line" "$report"
+  machine_append "$line" "$(dirname "$(dirname "$chain")")" "$aid"
+  [ "$agent" = integrator ] && stamp_cost "$chain" "$slug" "$logf" "$line" "$report"
   return 0
 }
 
-# stamp_cost <cwd> <slug> <log> <record> <report>: Orchestrate mode. Writes
+# stamp_cost <chain> <slug> <log> <record> <report>: Orchestrate mode. Writes
 # "cost: {tokens_k, usd_min, minutes, agents}" into the integrator's artifact:
 # its own record plus the nested agents it tagged T<n>a, T<n>b... Rewrites the
 # frontmatter's cost line, never appends. Silent on any problem.
 stamp_cost() {
-  local cwd="$1" slug="$2" log="$3" rec="$4" report="$5" apath art cost tmp
+  local chain="$1" slug="$2" log="$3" rec="$4" report="$5" apath art cost tmp
   apath=$(printf '%s\n' "$report" | sed -nE 's/^[[:space:]]*ARTIFACT:[[:space:]]*([^[:space:]]+).*/\1/p' | head -n 1)
-  printf '%s' "$apath" | grep -qE "^\.sdlc/$slug/work/[A-Za-z0-9_.-]+\.md$" || return 0
-  art="$cwd/$apath"
+  # Relative to the chain's repo, or absolute when the chain lives elsewhere
+  printf '%s' "$apath" | grep -qE "(^|/)\.sdlc/$slug/work/[A-Za-z0-9_.-]+\.md$" || return 0
+  art="$chain/work/$(basename "$apath")"
   [ -f "$art" ] && [ ! -L "$art" ] || return 0
   cost=$(jq -R -r -n --argjson own "$rec" '
     [inputs | fromjson? | select(type == "object")] as $all
@@ -172,8 +180,12 @@ post_tool_use() {
   [ -r "$fpath" ] && [ -n "$cwd" ] || return 0
   local rdir rcwd
   rdir=$(cd "$(dirname "$fpath")" 2>/dev/null && pwd -P) || return 0
-  rcwd=$(cd "$cwd" 2>/dev/null && pwd -P) || return 0
-  case "$rdir/" in "$rcwd"/*) ;; *) return 0 ;; esac
+  rcwd=$(sdlc_root "$cwd") || rcwd=$(cd "$cwd" 2>/dev/null && pwd -P) || return 0
+  # The plan of this repo, or the session's active chain (another repo)
+  case "$rdir/" in
+    "$rcwd"/*) ;;
+    *) [ "$rdir" = "$(chain_active "$(printf '%s' "$payload" | jq -r '.session_id // empty' 2>/dev/null)")" ] || return 0 ;;
+  esac
   now=${TASK_ACTUALS_NOW:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}
   logf="$(dirname "$fpath")/actuals.jsonl"
   # --rawfile, not --arg: a main transcript is several MB, above ARG_MAX
@@ -219,13 +231,23 @@ post_tool_use() {
         | ([$w[] | select((.message.id? | type) == "string")] | group_by(.message.id) | map(last)) as $msgs
         | ([$msgs[] | .message.usage | (.input_tokens // 0) + (.output_tokens // 0)
             + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)] | add // 0) as $tok
+        # usd_min: same price table and floor as subagent_stop
+        | {"claude-fable-5-2": [8, 40, 0.2], "claude-opus-5-5": [4, 20, 0.2],
+           "claude-sonnet-5-5": [2, 10, 0.1]} as $price
+        | ([$msgs[] | ($price[.message.model? // ""]) as $p
+            | if $p == null then null else .message.usage
+              | ((.input_tokens // 0) * $p[0] + (.output_tokens // 0) * $p[1]
+                 + (.cache_creation_input_tokens // 0) * $p[0] * 1.25
+                 + (.cache_read_input_tokens // 0) * $p[2]) / 1000000 end]) as $usds
+        | (if ($usds | length) > 0 and ($usds | all(. != null))
+           then ($usds | add * 100 | round / 100) else null end) as $usd
         | ((($n - $s) / 60) | r1) as $min
         | (($tok / 1000) | round) as $ktok
         | (if $em != null and $em > 0 then dev($min; $em) else null end) as $dm
         | (if $ek != null and $ek > 0 then dev($ktok; $ek) else null end) as $dt
         | {task: $task, runs_on: "main",
            model: ([$w[] | .message.model? // empty] | first // ""),
-           est_min: $em, est_ktok: $ek, min: $min, ktok: $ktok,
+           est_min: $em, est_ktok: $ek, min: $min, ktok: $ktok, usd_min: $usd,
            dev_min_pct: $dm, dev_tok_pct: $dt,
            flag: ((($dm // 0) | fabs) > 50 or (($dt // 0) | fabs) > 50),
            cause: (($st | capture("cause:[ \t]*(?<c>.*)") // {c: ""}) | .c | trim | sub("\\)$"; "") | trim | redact | .[0:200]),
