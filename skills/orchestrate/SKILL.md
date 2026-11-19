@@ -12,13 +12,11 @@ approved plan. What changes is who does the work. The `mode` hook records
 
 ## Roles
 
-- **Main session** (Fable 5.2 chosen at start; on Opus the cost split does
-  not apply, the mode says so): writes the chain, delegates each task to the
-  `integrator`, reads its artifact, decides. It does not explore, edit code
-  or run tests: `orchestrator-guard` allows only the chain, read-only git
-  (also `git -C`, chained or piped into head/tail/grep/wc), `git add/commit/push`
-  (the developer confirms), `calibrate.sh` and `clean.sh`. No `advisor`: it
-  would advise Fable with Fable; if it is on, ask the developer for `/advisor off`.
+- **Main session** (Fable 5.2 chosen at start): writes the chain, delegates
+  each task to the `integrator`, reads its artifact, decides. The guard allows
+  it the chain, read-only git (chained or piped into head/tail/grep/wc),
+  `git add/commit/push` (the developer confirms), `calibrate.sh`, `clean.sh`.
+  No `advisor` (Fable advising Fable): if on, ask for `/advisor off`.
 - **Active chain**: the chain may live in another repo than the session;
   `/orchestrate <dir>/.sdlc/<slug>` or the first write to it records it.
 - **integrator** (Opus 5.5): integrates, edits unclear code, launches
@@ -29,28 +27,31 @@ approved plan. What changes is who does the work. The `mode` hook records
 ## Delegating
 
 One prompt per task: `[sdlc:<slug>/T<n> est=<min>m/<ktok>k]`, then the path
-of a `brief` when it needs more than its plan row. Only `T0` (inspection
-for the spec) runs before the plan is approved: the guard blocks `T1`+ while
-`plan.md` says draft. Prior chains, design docs and code are read in `T0`,
-not by you: its summary carries what the spec needs, each fact with its
-file:line, and you draft from it (a gap is a follow-up `T0`, not a read).
+of a brief from `~/.claude/skills/sdlc/templates/brief.md` (at most 20 lines)
+when the plan row is not enough. Only `T0` (inspection for the spec) runs
+before the plan is approved: the guard blocks `T1`+ while `plan.md` says draft.
+Prior chains, design docs and code are read in `T0`, not by you.
+
+You decide, the integrator writes: your decisions go one line each in a
+brief, and a `T0` drafts or amends spec.md and the plan prose from them and
+its file:line facts (a gap is a follow-up `T0`, not a read). You read the
+result and correct it with short edits. A hook sets the Status of delegated
+rows (`in progress`, then the artifact's `result`): edit only main rows.
 
 ## Reading an artifact
 
-Frontmatter and summary only. Open one cited file:line per artifact, and
+Frontmatter and summary only: the guard lets you Read artifacts, `review/`
+and code with `limit` 40 at most. Open one cited file:line per artifact, and
 every citation of a `blocked` or `needs-decision` one. `needs-decision` is
 the integrator handing you a question it must not settle (`integrator.md`,
 *Escalate*): decide it yourself, or ask the developer when it changes the
-goal; never send it back unanswered. `cost` is measured by a hook; `data`
-and `regen` say what it is and whether it can be had again.
+goal; never send it back unanswered. `cost` is measured by a hook.
 
 ## Persist or discard
 
-Discard is the default. An artifact is useful later only if it records a
-decision and its reason, a later task or session will read it, or it is
-evidence for human review. Then cross it with the cost of getting it again
-(`regen`, `cost`; expensive = over $0.50 or 10 agent minutes, a starting
-value to tune):
+Discard is the default. Useful later = a decision and its reason, read by a
+later task or session, or evidence for human review. Cross it with the cost
+of getting it again (`regen`, `cost`; expensive = over $0.50 or 10 minutes):
 
 | | Cheap to regenerate | Expensive or not reproducible |
 |---|---|---|
@@ -66,8 +67,7 @@ value to tune):
 | exploration | one line in `context.md`, then discarded |
 
 raw-output is never persisted: keep its `regen` instead. Persisting means
-condensing what is needed, not copying the file. Same data rule as
-`Learned:`: the shape of the data, never values.
+condensing, not copying; the shape of the data, never values.
 
 On compact or resume, `plan-resume` lists delegated tasks with no artifact
 back: relaunch each with its tag and brief (absolute paths across repos).

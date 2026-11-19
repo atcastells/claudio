@@ -1,0 +1,1 @@
+{"name": "orchestrator-guard: main reads artifacts, review output and code only with limit <= 40", "kind": "hook", "script": "evals/scripts/orchestrator-guard-test.sh", "args": ["{root}/hooks", "read-limit"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA natural-volume-registry, main read whole T0 artifacts (claudio-3-6-2)"}

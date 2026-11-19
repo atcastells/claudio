@@ -1,0 +1,1 @@
+{"name": "orchestrate: main decides, the integrator writes spec and plan prose", "kind": "file_contains", "file": "{root}/skills/orchestrate/SKILL.md", "contains": "You decide, the integrator writes", "origin": "ASTRA natural-volume-registry, 1.1M Fable output tokens on spec edits (claudio-3-6-2)"}

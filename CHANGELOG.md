@@ -5,6 +5,28 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.6.2 — 2026-11-19
+
+Orchestrate after the second ASTRA session on 3.6.0 (natural-volume-registry):
+plan rows left `pending`, whole artifacts read by the main session, and 1.1M
+Fable output tokens spent writing the spec and briefs. Slug
+`.sdlc/claudio-3-6-2/`. `./install.sh` is enough.
+
+- **Plan Status by hook**: `task-actuals` sets a delegated row to
+  `in progress` when the main session launches it with an approved plan
+  (new PreToolUse `Agent|Task` entry) and to the artifact's `result`
+  (`done`, `blocked`, `needs-decision`) at the integrator's SubagentStop.
+  Main rows, nested tags (`T5a`) and a `done` row relaunched are left alone.
+- **Summary required**: `subagent-report-check` sends an integrator back
+  once when its artifact has no `## Summary` or one over 15 lines.
+- **Read guard**: in Orchestrate mode the main session reads integrator
+  artifacts (not briefs), `review/` output and files outside `.sdlc/` only
+  with `limit` 40 at most (`Read` added to the guard's matcher). The rest of
+  the chain and `~/.claude` are read freely.
+- **Main decides, the integrator writes**: the main session lists its
+  decisions in a brief; a `T0` with a *Spec draft* section writes or amends
+  `spec.md` and the plan prose. New `templates/brief.md`, at most 20 lines.
+
 ## 3.6.1 — 2026-11-19
 
 Fixes from the first sessions on 3.6.0 (ASTRA AST-ESP-002 in Orchestrate,

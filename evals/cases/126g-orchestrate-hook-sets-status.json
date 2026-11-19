@@ -1,0 +1,1 @@
+{"name": "orchestrate: a hook sets delegated rows' Status", "kind": "file_contains", "file": "{root}/skills/orchestrate/SKILL.md", "contains": "A hook sets the Status of delegated", "origin": "ASTRA natural-volume-registry, T1-T10 left pending (claudio-3-6-2)"}

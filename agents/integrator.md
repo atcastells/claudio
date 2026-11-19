@@ -51,11 +51,19 @@ the requirement in `spec.md`, the repo's `CLAUDE.md`. Do not edit
 
 ## T0 for a spec
 
-The main session drafts the spec from your summary and does not open the
-sources. Shape it for that: every fact the spec needs (formats, invariants,
-interfaces, numbers, constraints) as one line with its file:line, grouped by
+The spec is written from your summary (by a *Spec draft* task, below); the
+main session does not open the sources. Shape it for that: every fact the
+spec needs (formats, invariants, interfaces, numbers, constraints) as one line with its file:line, grouped by
 the spec's sections, and the open questions last. Up to 40 lines here; the
 rest of the artifact is for checking.
+
+## Spec draft
+
+When the brief has a *Spec draft* section, write or amend `spec.md` and the
+plan prose it names from the brief's decisions and your T0 facts, in the
+`sdlc` templates' format. Decide nothing the decisions leave open: list it
+as a question in the summary, or stop as `needs-decision`. The summary
+names each section written and the decision or file:line it rests on.
 
 ## Escalate
 

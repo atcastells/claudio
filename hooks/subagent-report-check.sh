@@ -80,6 +80,16 @@ if [ "$agent" = integrator ]; then
       for k in task kind result data regen evidence; do
         printf '%s\n' "$front" | grep -qE "^$k:[[:space:]]*[^[:space:]]" || problems+=("the artifact's frontmatter lacks '$k:'")
       done
+      # The main session reads frontmatter and summary only: the summary must
+      # exist and fit in 15 lines
+      sum=$(awk 'BEGIN { fm = 0 } NR == 1 && $0 == "---" { fm = 1; next } fm && $0 == "---" { fm = 0; next } fm { next }
+          /^## Summary[[:space:]]*$/ { in_s = 1; found = 1; next } in_s && /^## / { in_s = 0 }
+          in_s && /[^[:space:]]/ && !/^<!--/ { n++ } END { print (found ? n + 0 : -1) }' "$cwd/$apath")
+      if [ "$sum" = -1 ] || [ "$sum" = 0 ]; then
+        problems+=("the artifact has no '## Summary' with content: the main session reads only the frontmatter and that summary")
+      elif [ "$sum" -gt 15 ]; then
+        problems+=("the artifact's '## Summary' has $sum lines, at most 15: keep the decision and its evidence there, move the rest to '## Detail'")
+      fi
       # Review findings it cites must be on disk (reviewers cannot write them)
       slug=$(printf '%s' "$apath" | cut -d/ -f2)
       if { printf '%s\n' "$report"; cat "$cwd/$apath"; } 2>/dev/null | grep -qaF 'review/findings.md' \

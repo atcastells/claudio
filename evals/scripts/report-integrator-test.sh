@@ -1,7 +1,7 @@
 #!/bin/bash
 # Scenarios: subagent-report-check on integrator reports (Orchestrate mode artifacts).
 #   usage: report-integrator-test.sh <hooks-dir> <case>
-#   cases: no-artifact missing-file missing-field good findings-missing findings-present
+#   cases: no-artifact missing-file missing-field good findings-missing findings-present summary
 set -uo pipefail
 hooks="$1"; c="$2"
 tmp=$(mktemp -d)
@@ -58,6 +58,20 @@ case "$c" in
     mkdir -p "$repo/.sdlc/demo/review"; echo "# Findings" > "$repo/.sdlc/demo/review/findings.md"
     stop 'ARTIFACT: .sdlc/demo/work/T8-result.md'; rc=$?
     [ "$rc" = 0 ] || fail "findings.md present: exit $rc ($(cat "$tmp/err"))"
+    ;;
+  summary)
+    a="$repo/.sdlc/demo/work/T2-result.md"
+    art "$a"; sed -i.bak '/^## Summary/,$d' "$a"; echo "## Detail" >> "$a"; echo "x" >> "$a"
+    stop 'ARTIFACT: .sdlc/demo/work/T2-result.md'; rc=$?
+    [ "$rc" = 2 ] || fail "no summary: exit $rc"
+    grep -q 'Summary' "$tmp/err" || fail "message does not name the summary"
+    art "$a"; for i in $(seq 1 16); do echo "line $i" >> "$a"; done
+    stop 'ARTIFACT: .sdlc/demo/work/T2-result.md'; rc=$?
+    [ "$rc" = 2 ] || fail "17-line summary: exit $rc"
+    grep -q '15' "$tmp/err" || fail "message does not give the limit"
+    art "$a"; for i in $(seq 1 12); do echo "line $i" >> "$a"; done; printf '\n## Detail\n' >> "$a"; for i in $(seq 1 40); do echo "d $i" >> "$a"; done
+    stop 'ARTIFACT: .sdlc/demo/work/T2-result.md'; rc=$?
+    [ "$rc" = 0 ] || fail "13-line summary and long detail: exit $rc ($(cat "$tmp/err"))"
     ;;
 esac
 if [ "$fails" -eq 0 ]; then echo "all passed"; exit 0; fi

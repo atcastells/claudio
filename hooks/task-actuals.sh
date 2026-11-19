@@ -14,6 +14,11 @@
 #     whose "Runs on" is main: "in progress" appends a start line, "done" appends
 #     the closing line (same schema) with minutes and tokens from the main
 #     transcript between both timestamps. Other runners are ignored.
+#   PreToolUse (Agent|Task, Orchestrate mode, main session): a plan row
+#     [sdlc:<slug>/T<n> ...] launched with an approved plan gets Status
+#     "in progress"; at the integrator's SubagentStop the row gets the
+#     artifact's result (done, blocked, needs-decision). Only rows not run by
+#     main and with no letter (nested T5a are not plan rows).
 # Output tokens are not recorded: transcripts store usage at stream start.
 # Never blocks and never prints: any missing or bad input exits 0 silently.
 
@@ -68,6 +73,52 @@ machine_append() {
     'select(.event != "start") | . + {repo: $repo}' 2>/dev/null)
   [ -n "$mine" ] || return 0
   append_log "$mlog" "$mine" "$aid"
+  return 0
+}
+
+# set_status <plan.md> <task> <status>: rewrites the Status cell of the task's
+# row in the plan table. Leaves main rows, a row already in that status, and a
+# done row asked for "in progress" alone. Silent.
+set_status() {
+  local plan="$1" task="$2" st="$3" tmp
+  [ -f "$plan" ] && [ ! -L "$plan" ] || return 0
+  tmp=$(mktemp "$plan.XXXXXX" 2>/dev/null) || return 0
+  if awk -v t="$task" -v s="$st" '
+      function trim(x) { gsub(/^[ \t]+|[ \t]+$/, "", x); return x }
+      function unesc(x,  i) { while ((i = index(x, "\001")) > 0) x = substr(x, 1, i - 1) "\\|" substr(x, i + 1); return x }
+      { line = $0; gsub(/\\\|/, "\001", line); n = split(line, c, "|") }
+      !hdr && line ~ /^\|[ \t]*#[ \t]*\|/ {
+        for (i = 2; i < n; i++) { x = trim(c[i]); if (x == "Status") si = i; if (x == "Runs on") ri = i }
+        hdr = 1; print; next }
+      hdr && si && !done_row && line ~ /^\|/ && trim(c[2]) == t {
+        r = ri ? tolower(trim(c[ri])) : ""; cur = tolower(trim(c[si]))
+        if (r !~ /^main/ && index(cur, s) != 1 && !(s == "in progress" && cur ~ /^done/)) {
+          c[si] = " " s " "; out = c[1]; for (i = 2; i <= n; i++) out = out "|" c[i]
+          print unesc(out); done_row = 1; next }
+      }
+      { print }' "$plan" > "$tmp" && ! cmp -s "$tmp" "$plan"; then
+    mv "$tmp" "$plan" 2>/dev/null || rm -f "$tmp"
+  else
+    rm -f "$tmp"
+  fi
+  return 0
+}
+
+# pre_tool_use: Orchestrate main session launching a plan row
+pre_tool_use() {
+  local sid cwd tag slug task chain st
+  [ -z "$(printf '%s' "$payload" | jq -r '.agent_id // empty' 2>/dev/null)" ] || return 0
+  sid=$(printf '%s' "$payload" | jq -r '.session_id // empty' 2>/dev/null)
+  mode_is_orch "$sid" || return 0
+  cwd=$(printf '%s' "$payload" | jq -r '.cwd // empty' 2>/dev/null)
+  tag=$(printf '%s' "$payload" | jq -r '.tool_input.prompt // ""' 2>/dev/null \
+    | sed -nE '1,3s/.*\[sdlc:([a-z0-9-]+)\/(T[0-9]+) est=[^]]*\].*/\1 \2/p' | head -n 1)
+  [ -n "$tag" ] || return 0
+  slug="${tag% *}"; task="${tag#* }"
+  chain=$(chain_dir "$cwd" "$slug" "$sid") || return 0
+  st=$(grep -m 1 -E '^- \*\*Status\*\*:' "$chain/plan.md" 2>/dev/null)
+  case "$st" in *APPROVED*|*approved*) ;; *) return 0 ;; esac
+  set_status "$chain/plan.md" "$task" "in progress"
   return 0
 }
 
@@ -134,7 +185,30 @@ subagent_stop() {
   logf="$chain/actuals.jsonl"
   append_log "$logf" "$line" "$aid"
   machine_append "$line" "$(dirname "$(dirname "$chain")")" "$aid"
-  [ "$agent" = integrator ] && stamp_cost "$chain" "$slug" "$logf" "$line" "$report"
+  if [ "$agent" = integrator ]; then
+    stamp_cost "$chain" "$slug" "$logf" "$line" "$report"
+    plan_result "$chain" "$slug" "$(printf '%s' "$line" | jq -r '.task' 2>/dev/null)" "$report"
+  fi
+  return 0
+}
+
+# artifact_of <chain> <slug> <report>: the integrator's artifact in the chain
+artifact_of() {
+  local apath
+  apath=$(printf '%s\n' "$3" | sed -nE 's/^[[:space:]]*ARTIFACT:[[:space:]]*([^[:space:]]+).*/\1/p' | head -n 1)
+  printf '%s' "$apath" | grep -qE "(^|/)\.sdlc/$2/work/[A-Za-z0-9_.-]+\.md$" || return 1
+  [ -f "$1/work/$(basename "$apath")" ] && [ ! -L "$1/work/$(basename "$apath")" ] || return 1
+  printf '%s\n' "$1/work/$(basename "$apath")"
+}
+
+# plan_result <chain> <slug> <task> <report>: the artifact's result into the plan row
+plan_result() {
+  local art res
+  printf '%s' "$3" | grep -qE '^T[0-9]+$' || return 0
+  mode_is_orch "$(printf '%s' "$payload" | jq -r '.session_id // empty' 2>/dev/null)" || return 0
+  art=$(artifact_of "$1" "$2" "$4") || return 0
+  res=$(awk 'NR == 1 && $0 != "---" { exit } NR > 1 && $0 == "---" { exit } /^result:/ { sub(/^result:[ \t]*/, ""); print $1; exit }' "$art")
+  case "$res" in done|blocked|needs-decision) set_status "$1/plan.md" "$3" "$res" ;; esac
   return 0
 }
 
@@ -143,12 +217,9 @@ subagent_stop() {
 # its own record plus the nested agents it tagged T<n>a, T<n>b... Rewrites the
 # frontmatter's cost line, never appends. Silent on any problem.
 stamp_cost() {
-  local chain="$1" slug="$2" log="$3" rec="$4" report="$5" apath art cost tmp
-  apath=$(printf '%s\n' "$report" | sed -nE 's/^[[:space:]]*ARTIFACT:[[:space:]]*([^[:space:]]+).*/\1/p' | head -n 1)
+  local chain="$1" slug="$2" log="$3" rec="$4" report="$5" art cost tmp
   # Relative to the chain's repo, or absolute when the chain lives elsewhere
-  printf '%s' "$apath" | grep -qE "(^|/)\.sdlc/$slug/work/[A-Za-z0-9_.-]+\.md$" || return 0
-  art="$chain/work/$(basename "$apath")"
-  [ -f "$art" ] && [ ! -L "$art" ] || return 0
+  art=$(artifact_of "$chain" "$slug" "$report") || return 0
   cost=$(jq -R -r -n --argjson own "$rec" '
     [inputs | fromjson? | select(type == "object")] as $all
     | ($own.task | sub("[a-z]$"; "")) as $base
@@ -280,6 +351,7 @@ post_tool_use() {
 }
 
 case "$event" in
+  PreToolUse) pre_tool_use ;;
   SubagentStop) subagent_stop ;;
   PostToolUse) post_tool_use ;;
   *) ;;

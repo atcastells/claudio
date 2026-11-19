@@ -1,6 +1,6 @@
 #!/bin/bash
 # orchestrator-guard: in Orchestrate mode the main session plans and decides; the
-# integrator agent does the work. PreToolUse on Write|Edit|MultiEdit|NotebookEdit|Bash|Agent.
+# integrator agent does the work. PreToolUse on Write|Edit|MultiEdit|NotebookEdit|Bash|Agent|Task|Read.
 # Acts only when the session's orch marker exists.
 # Main session (no agent_id), exit 2 = block. Allowed there:
 #   - writes under a chain: .sdlc/<slug>/ of the repo that holds cwd (found by
@@ -15,6 +15,10 @@
 #   no substitution, redirection, subshell or background.
 #   - Agent: a plan row (T1 and up, no letter) is not delegated while the
 #     chain's plan.md is still a draft; T0, pre-plan inspection, passes.
+#   - Read: an integrator artifact (.sdlc/<slug>/work/*.md but its *-brief.md),
+#     review/ output and any file outside .sdlc/ only with limit <= 40 (the
+#     frontmatter and summary, or one cited file:line); the rest of the chain,
+#     briefs and ~/.claude are read freely.
 # Agents (agent_id set): git add/commit/push are blocked; an Edit/Write of a file
 # another agent of the active chain edited in the last hour gets a warning
 # (stdout JSON, exit 0): re-read it first.
@@ -144,6 +148,23 @@ fi
 
 # --- Main session --------------------------------------------------------
 case "$tool" in
+  Read)
+    f=$(printf '%s' "$payload" | jq -r '.tool_input.file_path // ""' 2>/dev/null)
+    lim=$(printf '%s' "$payload" | jq -r '.tool_input.limit // "" | tostring' 2>/dev/null)
+    [ -n "$f" ] || exit 0
+    case "$f" in /*) ;; *) [ -n "$cwd" ] && f="${cwd%/}/$f" || exit 0 ;; esac
+    case "$f" in "$HOME"/.claude/*) exit 0 ;; esac
+    case "$f" in
+      */.sdlc/*/work/*-brief.md) exit 0 ;;
+      */.sdlc/*/work/*|*/.sdlc/*/review/*) what="an integrator artifact or review output whole" ;;
+      */.sdlc/*) exit 0 ;;
+      *) what="code or docs outside .sdlc/ whole" ;;
+    esac
+    case "$lim" in ''|*[!0-9]*) ;; *) [ "$lim" -le 40 ] && exit 0 ;; esac
+    printf '%s\n' "BLOCKED by orchestrator-guard: Orchestrate mode, the main session does not read $what.
+Read with limit 40 (the frontmatter and summary, or one cited file:line with offset), or have the integrator summarize it: a follow-up T0 for the spec, or the task's artifact. Briefs, intent, spec, plan and context.md are read freely." >&2
+    exit 2
+    ;;
   Agent|Task)
     tag=$(printf '%s' "$payload" | jq -r '.tool_input.prompt // ""' 2>/dev/null \
       | sed -nE '1,3s/.*\[sdlc:([a-z0-9-]+)\/(T[0-9]+) est=[^]]*\].*/\1 \2/p' | head -n 1)

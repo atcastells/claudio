@@ -1,0 +1,1 @@
+{"name": "report-check integrator: artifact summary present and at most 15 lines", "kind": "hook", "script": "evals/scripts/report-integrator-test.sh", "args": ["{root}/hooks", "summary"], "expect_exit": 0, "contains": "all passed", "origin": "ASTRA natural-volume-registry, 20-24 KB T0 artifacts read whole (claudio-3-6-2)"}

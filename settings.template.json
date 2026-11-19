@@ -79,12 +79,22 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|Agent|Task",
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|Agent|Task|Read",
         "hooks": [
           {
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/orchestrator-guard.sh\"",
             "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/task-actuals.sh\"",
+            "timeout": 10
           }
         ]
       },

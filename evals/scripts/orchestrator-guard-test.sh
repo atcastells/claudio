@@ -3,7 +3,7 @@
 # Orchestrate mode, and nothing else.
 #   usage: orchestrator-guard-test.sh <hooks-dir> <case>
 #   cases: main-edit sub-edit sdlc-write git-read no-marker cross-chain git-write shared-edit
-#          git-read-more git-chain draft-plan
+#          git-read-more git-chain draft-plan read-limit
 set -uo pipefail
 hooks="$1"; c="$2"
 tmp=$(mktemp -d)
@@ -148,12 +148,27 @@ case "$c" in
     run 0 "T1 with an approved plan" "$(a '[sdlc:demo/T1 est=12m/2500k] baseline')"
     run 0 "unknown slug" "$(a '[sdlc:nope/T3 est=1m/100k] x')"
     ;;
+  read-limit)
+    w="$repo/.sdlc/demo/work"
+    run 2 "whole T0 artifact" "$(p Read "{\"file_path\":\"$w/T0-inspection.md\"}")"
+    run 2 "artifact with limit 200" "$(p Read "{\"file_path\":\"$w/T0-inspection.md\",\"limit\":200}")"
+    run 0 "artifact with limit 40" "$(p Read "{\"file_path\":\"$w/T0-inspection.md\",\"limit\":40}")"
+    run 0 "cited line with offset" "$(p Read "{\"file_path\":\"$w/T3.md\",\"offset\":120,\"limit\":10}")"
+    run 0 "own brief whole" "$(p Read "{\"file_path\":\"$w/T1-brief.md\"}")"
+    run 2 "review log whole" "$(p Read "{\"file_path\":\"$repo/.sdlc/demo/review/T1-diff.log\"}")"
+    run 0 "spec whole" "$(p Read "{\"file_path\":\"$repo/.sdlc/demo/spec.md\"}")"
+    run 0 "plan relative" "$(p Read '{"file_path":".sdlc/demo/plan.md"}')"
+    run 2 "source file whole" "$(p Read "{\"file_path\":\"$repo/src/a.ts\"}")"
+    run 2 "design doc whole" "$(p Read "{\"file_path\":\"$repo/docs/design/x.md\"}")"
+    run 0 "skill file" "$(p Read "{\"file_path\":\"$HOME/.claude/skills/orchestrate/SKILL.md\"}")"
+    run 0 "integrator reads code" "$(p Read "{\"file_path\":\"$repo/src/a.ts\"}" agent-1)"
+    ;;
   no-marker)
     rm -f "$tmp/claudio-orch-s1"
     run 0 "no marker Edit" "$(p Edit "{\"file_path\":\"$repo/src/a.ts\"}")"
     run 0 "no marker Bash" "$(p Bash '{"command":"cargo test"}')"
     : > "$tmp/claudio-orch-s1"
-    run 0 "Read is not blocked" "$(p Read "{\"file_path\":\"$repo/src/a.ts\"}")"
+    run 0 "Read with a limit is not blocked" "$(p Read "{\"file_path\":\"$repo/src/a.ts\",\"limit\":40}")"
     run 0 "bad session id" "$(jq -nc --arg cwd "$repo" '{session_id:"../x", cwd:$cwd, tool_name:"Edit", tool_input:{file_path:"src/a.ts"}}')"
     ;;
 esac
