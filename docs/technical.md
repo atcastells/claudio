@@ -31,7 +31,9 @@ The steps an agent follows are in [install.md](install.md).
   answers with one artifact in `.sdlc/<slug>/work/` that says what kind of
   data it holds and what it cost. The main session keeps what is worth
   keeping and discards the rest. A hook stops the main session from editing
-  or running tests in this mode.
+  or running tests in this mode; it may write the chain (also one in another
+  repo, `/orchestrate <dir>/.sdlc/<slug>`) and commit with your confirmation.
+  `/orchestrate allow-test <file>` lets agents weaken a test you approved.
 - **Plan hints in the status line** (terminal): the task in progress
   against its estimate (`T3 4m/6m`, yellow over, red over twice), what is
   left of the plan (`5/12 · ~22m left`), and `compact between tasks` at 70%

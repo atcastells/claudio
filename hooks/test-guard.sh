@@ -12,10 +12,30 @@ printf '%s' "$path" | grep -qEi '(\.|_)(test|spec)\.[a-z]+$|(^|/)(tests?|__tests
 old=$(printf '%s' "$payload" | jq -r '[.tool_input.old_string?, (.tool_input.edits[]?.old_string)?] | map(select(.!=null)) | join("\n")' 2>/dev/null)
 new=$(printf '%s' "$payload" | jq -r '[.tool_input.content?, .tool_input.new_string?, .tool_input.new_source?, (.tool_input.edits[]?.new_string)?] | map(select(.!=null)) | join("\n")' 2>/dev/null)
 
+# The developer typed "/orchestrate allow-test <file>" in the last 30 minutes
+# (hooks/mode.sh): a weakening edit of that file passes, for any agent of the session.
+allowed() {
+  local sid list now t p
+  sid=$(printf '%s' "$payload" | jq -r '.session_id // ""' 2>/dev/null)
+  case "$sid" in ""|*[!A-Za-z0-9_-]*) return 1 ;; esac
+  list="${TMPDIR:-/tmp}"; list="${list%/}/claudio-allow-$sid"
+  [ -f "$list" ] && [ ! -L "$list" ] || return 1
+  now=$(date +%s)
+  while read -r t p; do
+    case "$t" in ""|*[!0-9]*) continue ;; esac
+    [ $((now - t)) -le 1800 ] && [ -n "$p" ] || continue
+    [ "$path" = "$p" ] && return 0
+    case "$path" in */"$p") return 0 ;; esac
+  done < "$list"
+  return 1
+}
+
 block() {
+  allowed && exit 0
   printf '%s\n' "BLOCKED by test-guard in $(basename "$path"): $1
 If a test fails, fix the code, not the test. If the test is genuinely wrong,
-say so explicitly to the developer and wait for their decision." >&2
+say so explicitly to the developer and wait for their decision. If they agree,
+they type: /orchestrate allow-test <file> (30 minutes, that file only)." >&2
   exit 2
 }
 

@@ -1,0 +1,1 @@
+{"name":"integrator deletes only with clean.sh","kind":"file_contains","file":"{root}/agents/integrator.md","contains":"bash ~/.claude/skills/orchestrate/clean.sh"}

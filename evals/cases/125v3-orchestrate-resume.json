@@ -1,0 +1,1 @@
+{"name":"plan-resume: active chain and delegated tasks with no artifact","kind":"hook","script":"evals/scripts/orchestrate-resume-test.sh","args":["{root}/hooks"],"expect_exit":0,"contains":"all passed"}

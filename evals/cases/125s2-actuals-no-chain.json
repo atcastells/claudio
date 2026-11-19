@@ -1,0 +1,1 @@
+{"name":"task-actuals: no-chain","kind":"hook","script":"evals/scripts/actuals-cost-test.sh","args":["{root}/hooks","no-chain"],"expect_exit":0,"contains":"all passed"}

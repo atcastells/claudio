@@ -1,0 +1,1 @@
+{"name":"integrator writes review findings for reviewer and verifier","kind":"file_contains","file":"{root}/agents/integrator.md","contains":".sdlc/<slug>/review/findings.md"}

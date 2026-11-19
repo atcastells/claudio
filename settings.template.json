@@ -5,7 +5,8 @@
       "Glob",
       "Grep",
       "Edit",
-      "Write"
+      "Write",
+      "Bash(bash ~/.claude/skills/orchestrate/clean.sh *)"
     ],
     "deny": [
       "Read(**/.env)",
@@ -18,9 +19,6 @@
       "Read(**/*.p12)",
       "Bash(rm -rf *)",
       "Bash(rm -r *)",
-      "Bash(git push *)",
-      "Bash(git push)",
-      "Bash(git commit *)",
       "Bash(git merge *)",
       "Bash(git rebase *)",
       "Bash(git reset *)",
@@ -37,9 +35,6 @@
       "Bash(shred *)",
       "Bash(mv /*)",
       "Bash(docker system prune *)",
-      "Bash(git add *)",
-      "Bash(git add)",
-      "Bash(git commit)",
       "Bash(git merge)",
       "Bash(git rebase)",
       "Bash(git stash)",
@@ -47,6 +42,12 @@
       "Bash(git reset)"
     ],
     "ask": [
+      "Bash(git commit *)",
+      "Bash(git commit)",
+      "Bash(git push *)",
+      "Bash(git push)",
+      "Bash(git add *)",
+      "Bash(git add)",
       "Bash(rm *)",
       "Bash(git checkout *)",
       "Bash(git branch *)",
@@ -185,7 +186,7 @@
         ]
       },
       {
-        "matcher": "compact",
+        "matcher": "compact|resume",
         "hooks": [
           {
             "type": "command",

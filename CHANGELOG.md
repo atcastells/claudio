@@ -5,6 +5,41 @@ that the migration alone does not fix. **MINOR**: adds rules, skills or project
 files (ships `migrations/<version>.md` if it touches projects). **PATCH**:
 fixes with no change in expected behavior.
 
+## 3.5.0 — 2026-11-19
+
+Orchestrate mode, after its first real delivery (chain in one repo, session
+in another, main session on Opus 5.5). Slug `.sdlc/orchestrate-hardening/`.
+
+- **Active chain** (`hooks/lib/chain.sh`): the chain may live in another
+  repo. `/orchestrate <dir>/.sdlc/<slug>` or the first write to an existing
+  chain records it in the session marker. `orchestrator-guard` lets the main
+  session write it, and finds the repo's own `.sdlc/` above cwd, so a `cd`
+  into `.sdlc/` no longer blocks it.
+- **`task-actuals` across repos (fix)**: it looked for `.sdlc/<slug>/` only
+  under cwd, so a session in another repo dropped every record, the
+  machine log line and the artifact `cost`. It now uses the active chain,
+  and the machine log gets the line even when no chain is found.
+- **Git closes from the main session**: `git -C <dir>` read-only verbs, and
+  `git add/commit/push` answered with `permissionDecision: ask`. Global and
+  project settings move those three from `deny` to `ask` (migration
+  `3.5.0.md`). Agents stay blocked from git writes in the mode.
+- **Scoped deletes**: `skills/orchestrate/clean.sh` removes only inside
+  `.sdlc/<slug>/work/` and `$TMPDIR/claudio-*` scratch, allowed in settings;
+  `rm -r` stays denied.
+- **`/orchestrate allow-test <file>`**: the developer's approval reaches
+  `test-guard` for that file, for 30 minutes, for any agent of the session
+  (also through `bash-file-check`).
+- **Durable evidence**: the integrator keeps test logs in
+  `.sdlc/<slug>/review/` and writes `review/findings.md` for the reviewers.
+- **Resume**: `plan-resume` also runs on `resume`, reads the active chain
+  and lists delegated tasks with no artifact back, to relaunch them.
+- **Shared files**: the plan marks `(shared)` files of a wave;
+  `orchestrator-guard` warns an agent when another one edited the same file
+  in the last hour.
+- **Model**: the mode no longer assumes Fable 5.2; `/orchestrate` notes
+  when the main session already runs Opus, where the cost split does not
+  apply.
+
 ## 3.4.0 — 2026-11-18
 
 Orchestrate mode, opt-in: Fable 5.2 plans and decides, Opus 5.5 does the

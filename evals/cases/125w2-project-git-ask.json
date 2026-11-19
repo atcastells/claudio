@@ -1,0 +1,1 @@
+{"name":"project template: git add/commit/push ask, history rewrites denied","kind":"hook","script":"evals/scripts/git-ask-test.sh","args":["{root}/skills/repo-setup/templates/settings.json"],"expect_exit":0,"contains":"all passed"}

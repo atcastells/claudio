@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Orchestrate mode for the session — the main session (Fable 5.2, chosen at session start) plans and decides, the integrator agent (Opus 5.5) does the work and launches the other agents, and they talk only through artifacts in .sdlc/<slug>/work/. /orchestrate turns it on, /orchestrate off turns it off. Only the user switches modes.
+description: Orchestrate mode for the session — the main session (ideally Fable 5.2, chosen at session start) plans and decides, the integrator agent (Opus 5.5) does the work and launches the other agents, and they talk only through artifacts in .sdlc/<slug>/work/. /orchestrate [<chain dir>] turns it on, /orchestrate off turns it off, /orchestrate allow-test <file> approves weakening one test. Only the user switches modes.
 disable-model-invocation: true
 ---
 
@@ -12,11 +12,16 @@ approved plan. What changes is who does the work. The `mode` hook records
 
 ## Roles
 
-- **Main session** (Fable 5.2): writes `plan.md` and `context.md`, delegates
-  each task to the `integrator`, reads the artifact it returns, decides what
-  to persist. It does not explore, edit or run tests: `orchestrator-guard`
-  blocks Edit, Write and Bash outside `.sdlc/<slug>/`, read-only git and
-  `calibrate.sh`.
+- **Main session** (Fable 5.2 chosen at start; on Opus the cost split does
+  not apply, the mode says so): writes the chain (`plan.md`, `context.md`,
+  status, small edits), delegates each task to the `integrator`, reads the
+  artifact it returns, decides what to persist. It does not explore, edit
+  code or run tests: `orchestrator-guard` allows only the chain, read-only
+  git (also `git -C <dir>`), `git add/commit/push` (the developer confirms),
+  `calibrate.sh` and `clean.sh`.
+- **Active chain**: the chain may live in another repo than the session.
+  `/orchestrate <dir>/.sdlc/<slug>` records it; so does the first write to
+  an existing chain. Hooks find it there (guard, `task-actuals`, resume).
 - **integrator** (Opus 5.5): integrates, edits unclear code, launches
   `implementer`, `verifier`, `reviewer` and `scout`, and answers with one
   artifact. Only its artifact reaches the main session.
@@ -62,7 +67,13 @@ raw-output is never persisted: keep its `regen` instead. Persisting means
 condensing what is needed, not copying the file. Same data rule as
 `Learned:`: the shape of the data, never values.
 
+On compact or resume, `plan-resume` lists delegated tasks with no artifact
+back: relaunch each with its tag and brief (absolute paths when the chain
+is in another repo).
+
 ## Closing
 
-`.sdlc/<slug>/work/` is git-ignored. It is the resume point while Build is
-open; when Build closes, the last integrator task deletes what is left in it.
+`.sdlc/<slug>/work/` is git-ignored: the resume point while Build is open.
+When it closes, `bash ~/.claude/skills/orchestrate/clean.sh` empties it.
+Evidence stays in `review/`. Commit from the main session with
+`git commit -F .sdlc/<slug>/work/commit.txt` (no quotes or `$` in commands).
